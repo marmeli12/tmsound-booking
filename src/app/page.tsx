@@ -91,6 +91,14 @@ const AB_EXAMPLES = [
   },
 ];
 
+const ARTIST_PHOTOS = [
+  { src: "/artist-1.jpg", alt: "Артист, записывавшийся в T&M Sound" },
+  { src: "/artist-2.jpg", alt: "Артист, записывавшийся в T&M Sound" },
+  { src: "/artist-3.jpg", alt: "Артистка, записывавшаяся в T&M Sound" },
+  { src: "/artist-4.jpg", alt: "LUMI — записывалась в T&M Sound" },
+  { src: "/artist-5.jpg", alt: "Артист, записывавшийся в T&M Sound" },
+];
+
 const AVITO_LINK =
   "https://www.avito.ru/sankt-peterburg/predlozheniya_uslug/studiya_zvukozapisi_zapis_arenda_247_7918233405";
 const YANDEX_LINK = "https://yandex.ru/maps/org/t_m_sound/46124220149/";
@@ -519,27 +527,40 @@ export default function HomePage() {
           <div className="section-head stagger" style={{ ["--i" as string]: 0 }}>
             <h2 className="section-title">Работы</h2>
           </div>
-          <div className="works-lead stagger" style={{ ["--i" as string]: 1 }}>
-            Записывались у нас и сводили с нами
-          </div>
-          <p className="name-wall stagger" style={{ ["--i" as string]: 2 }}>
-            <span className="featured">LUMI</span>
-            <span className="dot"> · </span>
-            <span className="featured">Alitishka</span>
-            <span className="dot"> · </span>
-            Og&nbsp;Buda<span className="dot"> · </span>
-            Lizer<span className="dot"> · </span>
-            163ONMYNECK<span className="dot"> · </span>
-            SIDODGI&nbsp;DUBOSHIT<span className="dot"> · </span>
-            Blockkid<span className="dot"> · </span>
-            Stephan&nbsp;Pie<span className="dot"> · </span>
-            Suramura<span className="dot"> · </span>
-            Lustova<span className="dot"> · </span>
-            Romanova
-          </p>
-          <div className="works-foot stagger" style={{ ["--i" as string]: 3 }}>
-            <span className="legend-dot" /> — записывались в студии · жанры: экспериментальная музыка, хип-хоп,
-            поп, рок
+
+          <div className="raboty-body">
+            <div className="raboty-copy">
+              <div className="works-lead stagger" style={{ ["--i" as string]: 1 }}>
+                Записывались у нас и сводили с нами
+              </div>
+              <p className="name-wall stagger" style={{ ["--i" as string]: 2 }}>
+                <span className="featured">LUMI</span>
+                <span className="dot"> · </span>
+                <span className="featured">Alitishka</span>
+                <span className="dot"> · </span>
+                Og&nbsp;Buda<span className="dot"> · </span>
+                Lizer<span className="dot"> · </span>
+                163ONMYNECK<span className="dot"> · </span>
+                SIDODGI&nbsp;DUBOSHIT<span className="dot"> · </span>
+                Blockkid<span className="dot"> · </span>
+                Stephan&nbsp;Pie<span className="dot"> · </span>
+                Suramura<span className="dot"> · </span>
+                Lustova<span className="dot"> · </span>
+                Romanova
+              </p>
+              <div className="works-foot stagger" style={{ ["--i" as string]: 3 }}>
+                <span className="legend-dot" /> — записывались в студии · жанры: экспериментальная музыка, хип-хоп,
+                поп, рок
+              </div>
+            </div>
+
+            <div className="raboty-photos stagger img-reveal" style={{ ["--i" as string]: 2 }}>
+              {ARTIST_PHOTOS.map((p) => (
+                <div key={p.src} className="raboty-photo">
+                  <img src={assetPath(p.src)} alt={p.alt} loading="lazy" />
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="ab-section stagger" style={{ ["--i" as string]: 4 }}>
