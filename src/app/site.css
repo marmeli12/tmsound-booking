@@ -543,7 +543,9 @@
   .tm-site .studio-photos { grid-template-columns: 1fr; }
   .tm-site .studio-photos .wide { grid-column: 1; height: 200px; }
   .tm-site .studio-spec, .tm-site .studio-copy { max-width: 100%; }
-  .tm-site .stat-num { font-size: 40px; }
+  .tm-site .stat-row { flex-direction: column; align-items: flex-start; gap: 10px; margin-bottom: 22px; }
+  .tm-site .stat-num { font-size: 34px; }
+  .tm-site .stat-label { max-width: 100%; }
 
   .tm-site .name-wall { font-size: 18px; }
 

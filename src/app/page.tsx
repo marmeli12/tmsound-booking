@@ -108,8 +108,8 @@ const SECTIONS = [
   { id: "s-hero", num: "01", label: "Главная" },
   { id: "s-uslugi", num: "02", label: "Услуги" },
   { id: "s-studio", num: "03", label: "Студия" },
-  { id: "s-raboty", num: "04", label: "Работы" },
-  { id: "s-booking", num: "05", label: "Запись" },
+  { id: "s-booking", num: "04", label: "Запись" },
+  { id: "s-raboty", num: "05", label: "Работы" },
   { id: "s-faq", num: "06", label: "Вопросы" },
   { id: "s-kontakty", num: "07", label: "Контакты" },
 ];
@@ -328,8 +328,8 @@ export default function HomePage() {
             <div className="navlinks">
               <a href="#s-uslugi">Услуги</a>
               <a href="#s-studio">Студия</a>
-              <a href="#s-raboty">Работы</a>
               <a href="#s-booking">Как записаться</a>
+              <a href="#s-raboty">Работы</a>
               <a href="#s-faq">Вопросы</a>
               <a href="#s-kontakty">Контакты</a>
             </div>
@@ -486,9 +486,37 @@ export default function HomePage() {
           </div>
         </section>
 
+        <section id="s-booking" className="section reveal" onMouseMove={handleSpotlight}>
+          <div className="section-spotlight" />
+          <div className="booking-frame">
+            <div className="section-head section-head--center stagger" style={{ ["--i" as string]: 0 }}>
+              <h2 className="section-title">Как записаться</h2>
+            </div>
+
+            <p className="booking-lead stagger" style={{ ["--i" as string]: 1 }}>
+              Выберите время прямо здесь — ниже, без звонков и переписки. Если удобнее в переписке — пишите в
+              Telegram, тоже ответим быстро.
+            </p>
+
+            <div className="booking-embed stagger" style={{ ["--i" as string]: 2 }}>
+              <div className="wizard">
+                <div className="wizard-header">
+                  <div className="wizard-logo">T&amp;M Sound</div>
+                  <div className="wizard-title">Забронировать студию</div>
+                </div>
+                <BookingWizard />
+              </div>
+            </div>
+
+            <a className="cta-ghost stagger" style={{ ["--i" as string]: 3 }} href="https://t.me/tms0und" target="_blank" rel="noopener noreferrer">
+              Написать в Telegram →
+            </a>
+          </div>
+        </section>
+
         <section id="s-raboty" className="section reveal" onMouseMove={handleSpotlight}>
           <div className="section-spotlight" />
-          <div className="section-head section-head--center stagger" style={{ ["--i" as string]: 0 }}>
+          <div className="section-head stagger" style={{ ["--i" as string]: 0 }}>
             <h2 className="section-title">Работы</h2>
           </div>
           <div className="works-lead stagger" style={{ ["--i" as string]: 1 }}>
@@ -554,34 +582,6 @@ export default function HomePage() {
               })}
             </div>
             <span className="ab-note">[РЕАЛЬНЫЕ АУДИО-ПРИМЕРЫ — добавим, когда пришлёшь треки]</span>
-          </div>
-        </section>
-
-        <section id="s-booking" className="section reveal" onMouseMove={handleSpotlight}>
-          <div className="section-spotlight" />
-          <div className="booking-frame">
-            <div className="section-head section-head--center stagger" style={{ ["--i" as string]: 0 }}>
-              <h2 className="section-title">Как записаться</h2>
-            </div>
-
-            <p className="booking-lead stagger" style={{ ["--i" as string]: 1 }}>
-              Выберите время прямо здесь — ниже, без звонков и переписки. Если удобнее в переписке — пишите в
-              Telegram, тоже ответим быстро.
-            </p>
-
-            <div className="booking-embed stagger" style={{ ["--i" as string]: 2 }}>
-              <div className="wizard">
-                <div className="wizard-header">
-                  <div className="wizard-logo">T&amp;M Sound</div>
-                  <div className="wizard-title">Забронировать студию</div>
-                </div>
-                <BookingWizard />
-              </div>
-            </div>
-
-            <a className="cta-ghost stagger" style={{ ["--i" as string]: 3 }} href="https://t.me/tms0und" target="_blank" rel="noopener noreferrer">
-              Написать в Telegram →
-            </a>
           </div>
         </section>
 
