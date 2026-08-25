@@ -110,7 +110,71 @@ const SECTIONS = [
   { id: "s-studio", num: "03", label: "Студия" },
   { id: "s-raboty", num: "04", label: "Работы" },
   { id: "s-booking", num: "05", label: "Запись" },
-  { id: "s-kontakty", num: "06", label: "Контакты" },
+  { id: "s-faq", num: "06", label: "Вопросы" },
+  { id: "s-kontakty", num: "07", label: "Контакты" },
+];
+
+const ABON_PLANS = [
+  {
+    id: "a24",
+    name: "24 часа",
+    price: "15 000 ₽",
+    meta: "без звукорежиссёра · действует 3 месяца",
+    desc: "24 часа студийного времени без звукорежиссёра — подходит, если у вас уже есть свой инженер или вы записываетесь сами. Часы можно тратить любыми сессиями удобной длины в течение 3 месяцев с момента покупки.",
+    features: ["24 часа аренды студии", "Без звукорежиссёра", "Действует 3 месяца", "Можно делить на несколько сессий"],
+    featured: false,
+  },
+  {
+    id: "aArtist",
+    name: "Artist",
+    price: "12 000 ₽",
+    meta: "10 часов со звукорежиссёром · действует 2 месяца",
+    desc: "10 часов записи со звукорежиссёром — настройка оборудования, помощь во время сессии и базовая обработка вокала уже входят в стоимость. Действует 2 месяца с момента покупки.",
+    features: ["10 часов со звукорежиссёром", "Настройка оборудования и помощь во время записи", "Базовая обработка вокала", "Действует 2 месяца"],
+    featured: false,
+  },
+  {
+    id: "aPro",
+    name: "Pro",
+    price: "19 490 ₽",
+    meta: "24 часа со звукорежиссёром · приоритет · действует 3 месяца",
+    desc: "Самый популярный абонемент — 24 часа со звукорежиссёром, приоритет при бронировании на удобное время и запас в 3 месяца, чтобы не спешить.",
+    features: ["24 часа со звукорежиссёром", "Приоритет при бронировании", "Действует 3 месяца"],
+    featured: true,
+  },
+];
+
+const FAQ_ITEMS = [
+  {
+    id: "f1",
+    q: "Как забронировать студию?",
+    a: "Выберите дату и время прямо в блоке «Как записаться» выше — бронь подтвердится сразу. Если удобнее в переписке, напишите нам в Telegram: @tms0und.",
+  },
+  {
+    id: "f2",
+    q: "Нужен ли свой звукорежиссёр?",
+    a: "Нет — если выбрать тариф со звукорежиссёром, он настроит оборудование и поможет во время записи. Можно приехать и со своим инженером — тогда бронируйте студию без звукорежиссёра.",
+  },
+  {
+    id: "f3",
+    q: "Можно ли отменить или перенести бронь?",
+    a: "Да, напишите нам в Telegram или позвоните заранее — перенесём на удобное время. Подробности — в разделе «Полные правила аренды».",
+  },
+  {
+    id: "f4",
+    q: "Сколько человек может прийти на сессию?",
+    a: "Студия рассчитана на 5–7 человек одновременно — можно прийти с продюсером, бэк-вокалистами или всей командой.",
+  },
+  {
+    id: "f5",
+    q: "Как оплатить?",
+    a: "Наличными или переводом на месте, либо предоплатой при бронировании — способ оплаты обсудим в переписке.",
+  },
+  {
+    id: "f6",
+    q: "Работаете ли ночью?",
+    a: "Да, работаем 24/7 по записи — выбирайте любое удобное время в форме бронирования, включая ночные часы.",
+  },
 ];
 
 type ServiceRow = { id: string; idx: string; name: string; price: string; desc: string };
@@ -137,6 +201,9 @@ export default function HomePage() {
   const [activeId, setActiveId] = useState("s-hero");
   const [abStates, setAbStates] = useState<Record<string, AbState>>({ ex1: "before", ex2: "before", ex3: "before" });
   const [openServices, setOpenServices] = useState<Record<string, boolean>>({});
+  const [openFaq, setOpenFaq] = useState<Record<string, boolean>>({});
+  const [rulesOpen, setRulesOpen] = useState(false);
+  const [openAbonId, setOpenAbonId] = useState<string | null>(null);
 
   // Смена цитаты каждые 5.4с, с плавным затуханием на 0.5с — как в макете.
   useEffect(() => {
@@ -190,8 +257,32 @@ export default function HomePage() {
     };
   }, []);
 
+  // Модалки «Правила аренды» и карточка абонемента — блокируем скролл
+  // фона, пока хоть одна открыта, и закрываем по Esc.
+  useEffect(() => {
+    const anyOpen = rulesOpen || !!openAbonId;
+    if (!anyOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setRulesOpen(false);
+        setOpenAbonId(null);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [rulesOpen, openAbonId]);
+
   function toggleService(id: string) {
     setOpenServices((prev) => ({ ...prev, [id]: !prev[id] }));
+  }
+
+  function toggleFaq(id: string) {
+    setOpenFaq((prev) => ({ ...prev, [id]: !prev[id] }));
   }
 
   function renderServiceGroup(list: ServiceRow[]) {
@@ -214,6 +305,7 @@ export default function HomePage() {
   }
 
   const q = QUOTES[quoteIndex % QUOTES.length]!;
+  const openAbon = ABON_PLANS.find((p) => p.id === openAbonId) ?? null;
 
   return (
     <div className="tm-site">
@@ -238,6 +330,7 @@ export default function HomePage() {
               <a href="#s-studio">Студия</a>
               <a href="#s-raboty">Работы</a>
               <a href="#s-booking">Как записаться</a>
+              <a href="#s-faq">Вопросы</a>
               <a href="#s-kontakty">Контакты</a>
             </div>
             <a className="book-btn" href="#s-booking" onClick={handleBookClick}>
@@ -303,36 +396,46 @@ export default function HomePage() {
                   <div className="price-list">{renderServiceGroup(SERVICES_PRODUCTION)}</div>
                 </div>
 
-                <div className="service-group stagger" style={{ ["--i" as string]: 3 }}>
-                  <div className="group-label">Абонементы</div>
-                  <div className="compare-table">
-                    <div className="compare-col">
-                      <div className="compare-name">24 часа</div>
-                      <div className="compare-price">15 000 ₽</div>
-                      <div className="compare-meta">без звукорежиссёра · действует 3 месяца</div>
-                    </div>
-                    <div className="compare-col">
-                      <div className="compare-name">Artist</div>
-                      <div className="compare-price">12 000 ₽</div>
-                      <div className="compare-meta">10 часов со звукорежиссёром · действует 2 месяца</div>
-                    </div>
-                    <div className="compare-col compare-col--featured">
-                      <div className="compare-badge">Популярный</div>
-                      <div className="compare-name">Pro</div>
-                      <div className="compare-price">19 490 ₽</div>
-                      <div className="compare-meta">24 часа со звукорежиссёром · приоритет · действует 3 месяца</div>
-                    </div>
-                  </div>
-                </div>
-
-                <a className="section-link stagger" style={{ ["--i" as string]: 4 }} href="#">
+                <button
+                  type="button"
+                  className="section-link stagger"
+                  style={{ ["--i" as string]: 3 }}
+                  onClick={() => setRulesOpen(true)}
+                >
                   Полные правила аренды →
-                </a>
+                </button>
               </div>
 
               <div className="uslugi-photo stagger img-reveal" style={{ ["--i" as string]: 2 }}>
                 <img src={assetPath("/ambient.jpg")} alt="Сессия в студии T&amp;M Sound" />
                 <div className="uslugi-photo-cap">Одна из сессий в студии — до 5–7 человек одновременно</div>
+              </div>
+            </div>
+
+            <div className="abon-frame stagger" style={{ ["--i" as string]: 4 }}>
+              <div className="group-label group-label--center">Абонементы</div>
+              <div className="compare-table">
+                {ABON_PLANS.map((plan) => (
+                  <div
+                    key={plan.id}
+                    className={`compare-col${plan.featured ? " compare-col--featured" : ""}`}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setOpenAbonId(plan.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setOpenAbonId(plan.id);
+                      }
+                    }}
+                  >
+                    {plan.featured && <div className="compare-badge">Популярный</div>}
+                    <div className="compare-name">{plan.name}</div>
+                    <div className="compare-price">{plan.price}</div>
+                    <div className="compare-meta">{plan.meta}</div>
+                    <div className="compare-more">Подробнее →</div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -385,7 +488,7 @@ export default function HomePage() {
 
         <section id="s-raboty" className="section reveal" onMouseMove={handleSpotlight}>
           <div className="section-spotlight" />
-          <div className="section-head stagger" style={{ ["--i" as string]: 0 }}>
+          <div className="section-head section-head--center stagger" style={{ ["--i" as string]: 0 }}>
             <h2 className="section-title">Работы</h2>
           </div>
           <div className="works-lead stagger" style={{ ["--i" as string]: 1 }}>
@@ -482,6 +585,33 @@ export default function HomePage() {
           </div>
         </section>
 
+        <section id="s-faq" className="section reveal" onMouseMove={handleSpotlight}>
+          <div className="section-spotlight" />
+          <div className="section-head section-head--center stagger" style={{ ["--i" as string]: 0 }}>
+            <h2 className="section-title">Частые вопросы</h2>
+          </div>
+          <div className="faq-list">
+            {FAQ_ITEMS.map((f, i) => {
+              const isOpen = !!openFaq[f.id];
+              return (
+                <div
+                  key={f.id}
+                  className={`faq-item stagger${isOpen ? " is-open" : ""}`}
+                  style={{ ["--i" as string]: Math.min(i + 1, 6) }}
+                >
+                  <div className="faq-row" onClick={() => toggleFaq(f.id)}>
+                    <span className="faq-q">{f.q}</span>
+                    <span className="faq-chevron">+</span>
+                  </div>
+                  <div className="faq-a">
+                    <div className="faq-a-inner">{f.a}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
         <section id="s-kontakty" className="section reveal" onMouseMove={handleSpotlight}>
           <div className="section-spotlight" />
           <div className="section-head stagger" style={{ ["--i" as string]: 0 }}>
@@ -563,6 +693,92 @@ export default function HomePage() {
           </div>
         ))}
       </div>
+
+      {rulesOpen && (
+        <div className="modal-overlay" onClick={() => setRulesOpen(false)}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <button type="button" className="modal-close" onClick={() => setRulesOpen(false)} aria-label="Закрыть">
+              ×
+            </button>
+            <h3 className="modal-title">Правила аренды</h3>
+            <div className="modal-body">
+              <p>
+                Пожалуйста, ознакомьтесь с правилами перед бронированием — это поможет сессии пройти без сюрпризов
+                для вас и для студии.
+              </p>
+              <ol>
+                <li>Бронь подтверждается после согласования даты и времени — в форме на сайте или в Telegram.</li>
+                <li>
+                  Оплата — на месте наличными или переводом, либо предоплатой при бронировании (обсуждается
+                  индивидуально).
+                </li>
+                <li>
+                  Отмена или перенос — не позднее чем за 4 часа до начала сессии. При более позднем отказе
+                  предоплата не возвращается.
+                </li>
+                <li>Опоздание больше 15 минут сокращает оплаченное время — бронь не продлевается автоматически.</li>
+                <li>В студии одновременно могут находиться до 5–7 человек.</li>
+                <li>
+                  Бережно относитесь к оборудованию — порча или поломка по вине арендатора компенсируется по
+                  стоимости ремонта или замены.
+                </li>
+                <li>Курение в студии запрещено — можно выйти на балкон.</li>
+                <li>После сессии просим оставить помещение в том виде, в котором вы его застали.</li>
+                <li>Работаем 24/7 по предварительной записи.</li>
+              </ol>
+              <p className="modal-note">
+                Если у вас есть вопросы по правилам — напишите нам в{" "}
+                <a href="https://t.me/tms0und" target="_blank" rel="noopener noreferrer">
+                  Telegram
+                </a>
+                .
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {openAbon && (
+        <div className="modal-overlay" onClick={() => setOpenAbonId(null)}>
+          <div className="modal-card modal-card--abon" onClick={(e) => e.stopPropagation()}>
+            <button type="button" className="modal-close" onClick={() => setOpenAbonId(null)} aria-label="Закрыть">
+              ×
+            </button>
+            {openAbon.featured && <div className="compare-badge abon-modal-badge">Популярный</div>}
+            <h3 className="modal-title">{openAbon.name}</h3>
+            <div className="abon-modal-price">{openAbon.price}</div>
+            <div className="abon-modal-meta">{openAbon.meta}</div>
+            <p className="abon-modal-desc">{openAbon.desc}</p>
+            <ul className="abon-modal-features">
+              {openAbon.features.map((f) => (
+                <li key={f}>{f}</li>
+              ))}
+            </ul>
+            <div className="abon-modal-cta">
+              <a
+                className="cta-solid cta-primary"
+                href="https://t.me/tms0und"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Написать нам →
+              </a>
+              <div className="abon-modal-links">
+                <a href="tel:+79189443697">+7 918 944-36-97</a>
+                <a href="https://t.me/tms0und" target="_blank" rel="noopener noreferrer">
+                  Telegram
+                </a>
+                <a href="https://vk.ru/tmsoundd" target="_blank" rel="noopener noreferrer">
+                  VK
+                </a>
+                <a href="https://www.instagram.com/tm__sound/" target="_blank" rel="noopener noreferrer">
+                  Instagram
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

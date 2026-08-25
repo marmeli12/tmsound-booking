@@ -14,32 +14,49 @@
 
   /* ---------- hero ---------- */
   .tm-site .hero-section {
-    position: relative; overflow: hidden; min-height: 1000px;
+    position: relative; min-height: 1000px;
   }
-  .tm-site .bg { position: absolute; inset: 0; }
+  /* Фон растянут во весь экран (full-bleed), а не только на 1440px-канвас —
+     иначе на широких мониторах по бокам видны "рамки" из плоского фона.
+     Математика: каждый слой — absolute внутри .hero-section (который сам
+     всегда отцентрован во viewport), left:50%+margin-left:-50vw центрирует
+     100vw-широкий слой относительно ВЬЮПОРТА, а не узкого родителя.
+     Важно: left/right/width/margin-left указаны явно в КАЖДОМ правиле ниже
+     (а не через отдельный общий селектор) — иначе более специфичные
+     объявления ниже по каскаду (например inset:0) молча их перебивают. */
+  .tm-site .bg {
+    position: absolute; top: 0; bottom: 0;
+    left: 50%; right: auto; width: 100vw; margin-left: -50vw;
+  }
   .tm-site .bg img {
     width: 100%; height: 100%; object-fit: cover;
     filter: grayscale(0.35) contrast(1.08) brightness(0.5);
   }
   .tm-site .bg-tint {
-    position: absolute; inset: 0;
+    position: absolute; top: 0; bottom: 0;
+    left: 50%; right: auto; width: 100vw; margin-left: -50vw;
     background: linear-gradient(155deg, rgba(217,138,61,0.2) 0%, rgba(11,10,9,0.55) 45%, rgba(11,10,9,0.92) 100%);
     mix-blend-mode: multiply;
   }
   .tm-site .bg-fade {
-    position: absolute; inset: 0;
+    position: absolute; top: 0; bottom: 0;
+    left: 50%; right: auto; width: 100vw; margin-left: -50vw;
     background: linear-gradient(180deg, rgba(11,10,9,0.7) 0%, rgba(11,10,9,0.14) 30%, rgba(11,10,9,0.42) 62%, #0b0a09 100%);
   }
   .tm-site .grain {
-    position: absolute; inset: 0; opacity: 0.14; mix-blend-mode: overlay; pointer-events: none;
+    position: absolute; top: 0; bottom: 0;
+    left: 50%; right: auto; width: 100vw; margin-left: -50vw;
+    opacity: 0.14; mix-blend-mode: overlay; pointer-events: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
   .tm-site .hero-fade-out {
-    position: absolute; left: 0; right: 0; bottom: 0; height: 320px; pointer-events: none;
+    position: absolute; bottom: 0; height: 320px; pointer-events: none;
+    left: 50%; right: auto; width: 100vw; margin-left: -50vw;
     background: linear-gradient(180deg, rgba(11,10,9,0) 0%, #0b0a09 82%);
   }
   .tm-site .spotlight {
-    position: absolute; inset: 0; pointer-events: none; opacity: 0;
+    position: absolute; top: 0; bottom: 0; pointer-events: none; opacity: 0;
+    left: 50%; right: auto; width: 100vw; margin-left: -50vw;
     transition: opacity 0.4s ease;
     background: radial-gradient(circle 260px at var(--sx, 50%) var(--sy, 40%),
       rgba(240,228,206,0.4), rgba(217,138,61,0.14) 42%, transparent 72%);
@@ -166,6 +183,15 @@
   .tm-site .section-link {
     display: inline-block; margin-top: 36px; font-size: 13px; font-weight: 600;
     border-bottom: 1.5px solid #ece7df; padding-bottom: 2px;
+    transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+  .tm-site button.section-link {
+    background: none; border: none; border-bottom: 1.5px solid #ece7df;
+    padding: 0 0 2px 0; color: #ece7df; cursor: pointer; text-align: left;
+    font-family: inherit; font-size: 13px; font-weight: 600;
+  }
+  .tm-site .section-link:hover, .tm-site button.section-link:hover {
+    color: #d98a3d; border-color: #d98a3d; transform: translateX(3px);
   }
 
   /* услуги */
@@ -202,14 +228,17 @@
   .tm-site .price-item:hover .price-desc, .tm-site .price-item.is-open .price-desc { max-height: 160px; opacity: 1; }
   .tm-site .price-desc-inner { padding: 0 0 18px 42px; font-size: 13px; line-height: 1.6; color: rgba(236,231,223,0.6); max-width: 480px; }
 
-  .tm-site .compare-table { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; max-width: 900px; }
+  .tm-site .compare-table { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; max-width: 900px; margin: 0 auto; }
   .tm-site .compare-col {
-    display: flex; flex-direction: column; height: 100%;
+    display: flex; flex-direction: column; height: 100%; cursor: pointer;
     padding: 26px 24px; border: 1px solid rgba(236,231,223,0.14); border-radius: 4px;
     background: rgba(236,231,223,0.02);
     transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease;
   }
-  .tm-site .compare-col:hover { border-color: rgba(217,138,61,0.32); background: rgba(217,138,61,0.035); transform: translateY(-3px); }
+  .tm-site .compare-col:hover, .tm-site .compare-col:focus-visible {
+    border-color: rgba(217,138,61,0.32); background: rgba(217,138,61,0.035); transform: translateY(-3px);
+  }
+  .tm-site .compare-col:focus-visible { outline: none; }
   .tm-site .compare-col--featured { border-color: rgba(217,138,61,0.45); background: rgba(217,138,61,0.06); position: relative; }
   .tm-site .compare-col--featured:hover { border-color: #d98a3d; }
   .tm-site .compare-badge {
@@ -223,6 +252,15 @@
   }
   .tm-site .compare-price { font-family: 'Jost', sans-serif; font-size: 25px; color: #d98a3d; margin-bottom: 12px; }
   .tm-site .compare-meta { font-size: 12px; line-height: 1.55; color: rgba(236,231,223,0.5); margin-top: auto; }
+  .tm-site .compare-more {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.04em; color: rgba(236,231,223,0.4);
+    margin-top: 16px; transition: color 0.2s ease, transform 0.2s ease;
+  }
+  .tm-site .compare-col:hover .compare-more { color: #d98a3d; transform: translateX(3px); }
+
+  /* абонементы — самостоятельный центрированный блок под колонками услуг */
+  .tm-site .abon-frame { max-width: 900px; margin: 64px auto 0 auto; text-align: center; }
+  .tm-site .group-label--center { text-align: center; }
 
   /* студия */
   .tm-site .studio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: flex-start; }
@@ -326,6 +364,84 @@
   .tm-site .social-row a:hover { color: #d98a3d; transform: translateY(-2px); }
   .tm-site .footer-mini { margin-top: 90px; font-size: 12px; letter-spacing: 0.08em; color: rgba(236,231,223,0.32); }
 
+  /* частые вопросы */
+  .tm-site .faq-list { max-width: 760px; margin: 0 auto; }
+  .tm-site .faq-item { border-top: 1px solid rgba(236,231,223,0.12); }
+  .tm-site .faq-item:last-child { border-bottom: 1px solid rgba(236,231,223,0.12); }
+  .tm-site .faq-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 18px;
+    padding: 22px 4px; cursor: pointer;
+  }
+  .tm-site .faq-row:hover .faq-q { color: #d98a3d; }
+  .tm-site .faq-q { font-family: 'Jost', sans-serif; font-size: 17px; color: rgba(236,231,223,0.88); transition: color 0.2s ease; }
+  .tm-site .faq-chevron {
+    font-family: 'Jost', sans-serif; font-size: 20px; color: rgba(236,231,223,0.32); flex-shrink: 0;
+    transition: transform 0.25s ease, color 0.25s ease;
+  }
+  .tm-site .faq-item.is-open .faq-chevron { transform: rotate(45deg); color: #d98a3d; }
+  .tm-site .faq-a { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.35s ease, opacity 0.3s ease; }
+  .tm-site .faq-item.is-open .faq-a { max-height: 220px; opacity: 1; }
+  .tm-site .faq-a-inner { padding: 0 4px 22px 4px; font-size: 14px; line-height: 1.65; color: rgba(236,231,223,0.6); max-width: 640px; }
+
+  /* ---------- модалки (правила аренды, карточка абонемента) ---------- */
+  .tm-site .modal-overlay {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(11, 10, 9, 0.72);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    animation: tm-modal-fade 0.2s ease;
+  }
+  .tm-site .modal-card {
+    position: relative; width: 100%; max-width: 560px; max-height: 84vh; overflow-y: auto;
+    background: #14120f; border: 1px solid rgba(217, 138, 61, 0.25); border-radius: 4px;
+    padding: 40px 36px;
+    animation: tm-modal-in 0.25s cubic-bezier(.16,.8,.24,1);
+  }
+  .tm-site .modal-card--abon { max-width: 460px; }
+  .tm-site .modal-close {
+    position: absolute; top: 16px; right: 16px; width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    background: transparent; border: 1px solid rgba(236,231,223,0.18); border-radius: 2px;
+    color: rgba(236,231,223,0.6); font-size: 20px; line-height: 1; cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+  .tm-site .modal-close:hover { color: #d98a3d; border-color: #d98a3d; }
+  .tm-site .modal-title {
+    font-family: 'Jost', sans-serif; font-weight: 500; font-size: 24px; text-transform: uppercase;
+    letter-spacing: 0.01em; margin: 0 0 20px 0; padding-right: 30px;
+  }
+  .tm-site .modal-body { font-size: 14px; line-height: 1.7; color: rgba(236,231,223,0.75); }
+  .tm-site .modal-body p { margin: 0 0 16px 0; }
+  .tm-site .modal-body ol { margin: 0 0 20px 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .tm-site .modal-body ol li::marker { color: #d98a3d; font-family: 'Jost', sans-serif; }
+  .tm-site .modal-note { font-size: 13px; color: rgba(236,231,223,0.5); margin-bottom: 0; }
+  .tm-site .modal-note a { color: #d98a3d; border-bottom: 1px solid rgba(217,138,61,0.4); }
+
+  /* карточка абонемента внутри модалки */
+  .tm-site .abon-modal-badge { margin-bottom: 18px; }
+  .tm-site .abon-modal-price { font-family: 'Jost', sans-serif; font-size: 32px; color: #d98a3d; margin: 0 0 6px 0; }
+  .tm-site .abon-modal-meta { font-size: 12px; color: rgba(236,231,223,0.5); margin-bottom: 20px; }
+  .tm-site .abon-modal-desc { font-size: 14px; line-height: 1.7; color: rgba(236,231,223,0.72); margin: 0 0 22px 0; }
+  .tm-site .abon-modal-features { list-style: none; margin: 0 0 28px 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .tm-site .abon-modal-features li {
+    display: flex; align-items: baseline; gap: 10px; font-size: 14px; color: rgba(236,231,223,0.85);
+  }
+  .tm-site .abon-modal-features li::before { content: "—"; color: #d98a3d; flex-shrink: 0; }
+  .tm-site .abon-modal-cta { border-top: 1px solid rgba(236,231,223,0.12); padding-top: 24px; }
+  .tm-site .abon-modal-cta .cta-solid { display: block; text-align: center; margin-bottom: 18px; }
+  .tm-site .abon-modal-links {
+    display: flex; flex-wrap: wrap; gap: 10px 18px; font-size: 12px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: rgba(236,231,223,0.5);
+  }
+  .tm-site .abon-modal-links a { transition: color 0.2s ease; }
+  .tm-site .abon-modal-links a:hover { color: #d98a3d; }
+
+  @keyframes tm-modal-fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes tm-modal-in {
+    from { opacity: 0; transform: translateY(12px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
   /* ---------- scroll reveal ---------- */
   .tm-site .reveal {
     opacity: 0; transform: translateY(32px);
@@ -391,6 +507,7 @@
   .tm-site .uslugi-body { grid-template-columns: 1fr; gap: 40px; }
   .tm-site .studio-grid { grid-template-columns: 1fr; gap: 40px; }
   .tm-site .compare-table { grid-template-columns: 1fr; max-width: 480px; }
+  .tm-site .abon-frame { margin-top: 48px; }
   .tm-site .booking-steps { grid-template-columns: 1fr; gap: 32px; }
 }
 
@@ -433,4 +550,11 @@
 
   .tm-site .contacts-row { flex-direction: column; align-items: flex-start; gap: 32px; }
   .tm-site .footer-mini { margin-top: 56px; }
+
+  .tm-site .abon-frame { margin-top: 40px; }
+  .tm-site .faq-list { max-width: 100%; }
+  .tm-site .faq-q { font-size: 15px; }
+
+  .tm-site .modal-card { padding: 28px 20px; max-height: 88vh; }
+  .tm-site .modal-title { font-size: 20px; }
 }
