@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "bookings" ADD COLUMN "google_event_id" TEXT;

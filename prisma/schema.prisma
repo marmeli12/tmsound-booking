@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  REJECTED
+  CANCELLED
+}
+
+/// Услуги — отдельная сущность, чтобы название/описание/цену можно было
+/// менять без изменения кода (через сид-скрипт или Prisma Studio).
+model Service {
+  id           String    @id @default(cuid())
+  slug         String    @unique
+  name         String
+  description  String?
+  pricePerHour Int       @map("price_per_hour") // рубли за час
+  sortOrder    Int       @default(0) @map("sort_order")
+  isActive     Boolean   @default(true) @map("is_active")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+  bookings     Booking[]
+
+  @@map("services")
+}
+
+/// Бронирование. startsAt/endsAt — абсолютные timestamptz, это источник
+/// истины для проверки пересечений (см. миграцию 20240101000100_overlap_protection,
+/// которая добавляет EXCLUDE-ограничение на пересечение диапазонов на уровне БД).
+model Booking {
+  id               String        @id @default(cuid())
+  clientName       String        @map("client_name")
+  telegramUsername String?       @map("telegram_username")
+  telegramChatId   String?       @map("telegram_chat_id")
+  phone            String?
+  instagram        String?
+  serviceId        String        @map("service_id")
+  service          Service       @relation(fields: [serviceId], references: [id])
+  date             DateTime      @db.Date
+  startTime        String        @map("start_time") // "HH:mm" в Europe/Moscow, для быстрого отображения
+  endTime          String        @map("end_time")
+  startsAt         DateTime      @db.Timestamptz(3) @map("starts_at") // абсолютный UTC-момент начала
+  endsAt           DateTime      @db.Timestamptz(3) @map("ends_at") // абсолютный UTC-момент конца
+  duration         Int // часы
+  price            Int // рубли, посчитано на сервере из Service.pricePerHour
+  status           BookingStatus @default(PENDING)
+  comment          String?
+  /// Токен для диплинка на клиентского Telegram-бота (t.me/<bot>?start=<linkToken>),
+  /// по нему бот при /start понимает, к какой заявке привязать chat_id клиента.
+  linkToken        String        @unique @default(cuid()) @map("link_token")
+  /// ID события в Google Calendar (заполняется при подтверждении брони,
+  /// см. src/lib/googleCalendar.ts) — нужен, чтобы удалить событие при
+  /// отмене. Пусто, если интеграция с календарём не настроена.
+  googleEventId    String?       @map("google_event_id")
+  createdAt        DateTime      @default(now()) @map("created_at")
+  updatedAt        DateTime      @updatedAt @map("updated_at")
+
+  @@index([date])
+  @@index([status])
+  @@index([serviceId])
+  @@map("bookings")
+}
+
+/// Ручная блокировка времени (например, техобслуживание студии).
+/// Тоже учитывается при расчёте доступных часов.
+model BlockedSlot {
+  id        String   @id @default(cuid())
+  date      DateTime @db.Date
+  startTime String   @map("start_time")
+  endTime   String   @map("end_time")
+  startsAt  DateTime @db.Timestamptz(3) @map("starts_at")
+  endsAt    DateTime @db.Timestamptz(3) @map("ends_at")
+  reason    String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([date])
+  @@map("blocked_slots")
+}
+
+/// Единственная строка настроек (singleton). Рабочие часы — массив правил
+/// по дням недели, чтобы можно было задать разное расписание для будних
+/// и выходных без изменения кода.
+model Settings {
+  id            String   @id @default("singleton")
+  /// [{ "days": [1,2,3,4,5], "open": "10:00", "close": "23:00" },
+  ///  { "days": [0,6], "open": "12:00", "close": "23:00" }]
+  /// days: 0 = воскресенье … 6 = суббота (как Date#getDay() в JS)
+  workingHours  Json     @map("working_hours")
+  timezone      String   @default("Europe/Moscow")
+  studioAddress String   @default("Санкт-Петербург, Пирогова, 17") @map("studio_address")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
+}
