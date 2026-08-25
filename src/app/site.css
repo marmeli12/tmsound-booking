@@ -511,50 +511,75 @@
   .tm-site .booking-steps { grid-template-columns: 1fr; gap: 32px; }
 }
 
-/* phones — hide the rotated side rail, stack everything, tighten type */
+/* телефоны — рейка остаётся, но сжимается; всё остальное складывается в
+   один столбец. Правый отступ nav/hero/section/quote увеличен, чтобы
+   контент не заезжал под узкую рейку (она фиксирована и перекрывает всё,
+   что окажется под ней). */
 @media (max-width: 640px) {
-  .tm-site .rail { display: none; }
+  .tm-site .rail { width: 40px; }
+  .tm-site .rail-item { gap: 8px; font-size: 10px; }
+  .tm-site .rail-item b { font-size: 10px; }
 
-  .tm-site .nav { flex-wrap: wrap; gap: 14px 20px; padding: 20px 20px 18px 20px; }
-  .tm-site .nav::after { left: 20px; right: 20px; }
-  .tm-site .navlinks { order: 3; width: 100%; gap: 16px; flex-wrap: wrap; font-size: 12px; }
+  .tm-site .nav { flex-wrap: wrap; gap: 14px 20px; padding: 20px 64px 18px 20px; }
+  .tm-site .nav::after { left: 20px; right: 64px; }
+  .tm-site .navlinks { order: 3; width: 100%; gap: 12px 18px; flex-wrap: wrap; font-size: 12px; }
   .tm-site .book-btn { padding: 9px 16px; font-size: 12px; }
 
   .tm-site .hero-section { min-height: auto; padding-bottom: 60px; }
-  .tm-site .hero { padding: 120px 20px 0 20px; max-width: 100%; }
-  .tm-site .wordmark { font-size: 42px; }
+  .tm-site .hero { padding: 120px 64px 0 20px; max-width: 100%; }
+  .tm-site .wordmark { font-size: 40px; }
   .tm-site .desc { font-size: 14px; max-width: 100%; }
   .tm-site .cta-row { flex-wrap: wrap; gap: 16px; }
 
-  .tm-site .quote { position: static; width: 100%; margin: 40px 20px 0 20px; min-height: 0; }
+  .tm-site .quote { position: static; width: 100%; margin: 40px 64px 0 20px; min-height: 0; }
 
-  .tm-site .section { padding: 64px 20px; }
-  .tm-site .section::before { left: 20px; right: 20px; }
-  .tm-site .section-title { font-size: 26px; }
-  .tm-site .section-head { margin-bottom: 32px; }
+  .tm-site .section { padding: 64px 64px 64px 20px; }
+  .tm-site .section::before { left: 20px; right: 64px; }
+  .tm-site .section-title { font-size: 25px; }
+  .tm-site .section-head { margin-bottom: 30px; }
+  .tm-site .section-head--center { margin-bottom: 40px; }
 
-  .tm-site .uslugi-photo img { height: 240px; }
+  .tm-site .uslugi-photo img { height: 220px; }
   .tm-site .studio-photos { grid-template-columns: 1fr; }
-  .tm-site .studio-photos .wide { grid-column: 1; height: 220px; }
+  .tm-site .studio-photos .wide { grid-column: 1; height: 200px; }
   .tm-site .studio-spec, .tm-site .studio-copy { max-width: 100%; }
-  .tm-site .stat-num { font-size: 42px; }
+  .tm-site .stat-num { font-size: 40px; }
 
-  .tm-site .name-wall { font-size: 19px; }
+  .tm-site .name-wall { font-size: 18px; }
 
   .tm-site .ab-examples { max-width: 100%; }
-  .tm-site .ab-example { padding: 18px; }
+  .tm-site .ab-example { padding: 16px; }
   .tm-site .ab-example-head { flex-wrap: wrap; gap: 12px; }
 
   .tm-site .booking-frame { max-width: 100%; }
-  .tm-site .booking-embed { padding: 20px; }
+  .tm-site .booking-embed { padding: 18px; }
 
   .tm-site .contacts-row { flex-direction: column; align-items: flex-start; gap: 32px; }
   .tm-site .footer-mini { margin-top: 56px; }
 
-  .tm-site .abon-frame { margin-top: 40px; }
+  .tm-site .abon-frame { margin-top: 36px; }
+  .tm-site .compare-col { padding: 22px 18px; }
   .tm-site .faq-list { max-width: 100%; }
+  .tm-site .faq-row { padding: 18px 4px; }
   .tm-site .faq-q { font-size: 15px; }
 
-  .tm-site .modal-card { padding: 28px 20px; max-height: 88vh; }
-  .tm-site .modal-title { font-size: 20px; }
+  .tm-site .modal-card { padding: 26px 18px; max-height: 88vh; }
+  .tm-site .modal-title { font-size: 19px; }
+  .tm-site .abon-modal-price { font-size: 26px; }
+}
+
+/* совсем маленькие телефоны — рейка и отступы сжимаются ещё немного */
+@media (max-width: 400px) {
+  .tm-site .rail { width: 34px; }
+  .tm-site .rail-item { font-size: 9px; gap: 6px; }
+  .tm-site .rail-item b { font-size: 9px; }
+
+  .tm-site .nav { padding-right: 56px; }
+  .tm-site .nav::after { right: 56px; }
+  .tm-site .hero { padding-right: 56px; }
+  .tm-site .quote { margin-right: 56px; }
+  .tm-site .section { padding-right: 56px; }
+  .tm-site .section::before { right: 56px; }
+
+  .tm-site .wordmark { font-size: 34px; }
 }
