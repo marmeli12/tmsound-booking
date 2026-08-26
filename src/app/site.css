@@ -302,7 +302,7 @@
 
   /* карусель фото артистов — кроссфейд между слоями + медленный zoom,
      ник артиста и точки-индикаторы под фото */
-  .tm-site .raboty-carousel { width: 100%; max-width: 420px; }
+  .tm-site .raboty-carousel { width: 100%; max-width: 420px; margin-top: -10px; }
   .tm-site .raboty-carousel-frame {
     position: relative; width: 100%; aspect-ratio: 1; overflow: hidden;
     border-radius: 4px; border: 1px solid rgba(236,231,223,0.14); background: rgba(236,231,223,0.02);
