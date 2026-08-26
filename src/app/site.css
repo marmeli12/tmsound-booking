@@ -175,6 +175,20 @@
     mask-image: linear-gradient(to bottom, transparent 0, black 80px, black calc(100% - 80px), transparent 100%);
   }
   .tm-site .section:hover .section-spotlight { opacity: 0.55; }
+
+  /* На тач-устройствах (телефон/планшет) убираем декоративные слои,
+     которые реагируют только на наведение мыши: .grain (SVG-шум с
+     feTurbulence — один из самых "тяжёлых" для отрисовки CSS-эффектов),
+     .spotlight в хиро и .section-spotlight в каждой секции (это ещё
+     6 таких же слоёв с mask-image и transition по всей странице). На
+     тач-экране они всё равно никогда не включаются осмысленно, а их
+     количество и вес, судя по всему, и вызывают то самое "подвисание"
+     свайпа сразу после загрузки, пока Safari их все не откомпозит. */
+  @media (hover: none) {
+    .tm-site .grain,
+    .tm-site .spotlight,
+    .tm-site .section-spotlight { display: none; }
+  }
   .tm-site .section-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 48px; }
   .tm-site .section-title {
     font-family: 'Jost', sans-serif; font-weight: 500; font-size: 34px; margin: 0;
