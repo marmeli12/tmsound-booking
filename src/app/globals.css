@@ -17,6 +17,19 @@ html, body {
   background: var(--bg);
   color: var(--fg);
   font-family: "Manrope", system-ui, sans-serif;
+  /* На телефонах (особенно в Safari, открытом по ссылке из другого
+     приложения) секции с "full-bleed" фоном (width:100vw + отрицательный
+     margin-left, см. .bg/.bg-tint/.grain и т.д. в site.css) на долю секунды
+     до полной раскладки страницы формально шире вьюпорта. Если это скрыто
+     только через overflow-x:hidden на вложенном div (.tm-site), сама
+     страница (html/body) всё ещё "думает", что у неё есть горизонтальный
+     скролл — и Safari иногда блокирует вертикальный свайп, пока это не
+     утрясётся (отсюда "не листается, пока не прогрузится"). Прибиваем
+     overflow-x на самом html/body — тогда браузер сразу знает, что скролл
+     только вертикальный. */
+  overflow-x: hidden;
+  overscroll-behavior-x: none;
+  width: 100%;
 }
 
 a { color: inherit; }
