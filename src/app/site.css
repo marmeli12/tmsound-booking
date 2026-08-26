@@ -64,17 +64,6 @@
     left: 50%; right: auto; width: 100vw; margin-left: -50vw;
     background: linear-gradient(180deg, rgba(11,10,9,0) 0%, #0b0a09 82%);
   }
-  .tm-site .spotlight {
-    position: absolute; top: 0; bottom: 0; pointer-events: none; opacity: 0;
-    left: 50%; right: auto; width: 100vw; margin-left: -50vw;
-    transition: opacity 0.4s ease;
-    background: radial-gradient(circle 260px at var(--sx, 50%) var(--sy, 40%),
-      rgba(240,228,206,0.4), rgba(217,138,61,0.14) 42%, transparent 72%);
-    mix-blend-mode: soft-light;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0, black 90px, black calc(100% - 90px), transparent 100%);
-    mask-image: linear-gradient(to bottom, transparent 0, black 90px, black calc(100% - 90px), transparent 100%);
-  }
-  .tm-site .hero-section:hover .spotlight { opacity: 1; }
   .tm-site .nav {
     position: relative; z-index: 3; display: flex; align-items: center; justify-content: space-between;
     padding: 32px 96px 24px 64px;
@@ -175,16 +164,6 @@
     content: ""; position: absolute; left: 64px; right: 156px; top: 0; height: 1px;
     background: linear-gradient(90deg, transparent 0%, rgba(236,231,223,0.12) 28%, rgba(236,231,223,0.16) 50%, rgba(236,231,223,0.12) 72%, transparent 100%);
   }
-  .tm-site .section-spotlight {
-    position: absolute; inset: 0; pointer-events: none; opacity: 0; z-index: -1;
-    transition: opacity 0.6s ease;
-    background: radial-gradient(circle 220px at var(--sx, 50%) var(--sy, 40%),
-      rgba(240,228,206,0.07), rgba(217,138,61,0.05) 45%, transparent 70%);
-    mix-blend-mode: soft-light;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0, black 80px, black calc(100% - 80px), transparent 100%);
-    mask-image: linear-gradient(to bottom, transparent 0, black 80px, black calc(100% - 80px), transparent 100%);
-  }
-  .tm-site .section:hover .section-spotlight { opacity: 0.55; }
   .tm-site .section-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 48px; }
   .tm-site .section-title {
     font-family: 'Jost', sans-serif; font-weight: 500; font-size: 34px; margin: 0;

@@ -197,12 +197,6 @@ function handleBookClick(e: ReactMouseEvent<HTMLAnchorElement>) {
   scrollToSection("s-booking");
 }
 
-function handleSpotlight(e: ReactMouseEvent<HTMLElement>) {
-  const rect = e.currentTarget.getBoundingClientRect();
-  e.currentTarget.style.setProperty("--sx", `${e.clientX - rect.left}px`);
-  e.currentTarget.style.setProperty("--sy", `${e.clientY - rect.top}px`);
-}
-
 export default function HomePage() {
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [quoteFading, setQuoteFading] = useState(false);
@@ -329,7 +323,7 @@ export default function HomePage() {
   return (
     <div className="tm-site">
       <div className="root">
-        <section id="s-hero" className="hero-section reveal" onMouseMove={handleSpotlight}>
+        <section id="s-hero" className="hero-section reveal">
           <div className="bg">
             <img src={assetPath("/desk.jpg")} alt="Рабочее место студии" />
           </div>
@@ -337,7 +331,6 @@ export default function HomePage() {
           <div className="bg-fade" />
           <div className="grain" />
           <div className="hero-fade-out" />
-          <div className="spotlight" />
 
           <div className="nav stagger" style={{ ["--i" as string]: 0 }}>
             <div className="logo-mark">
@@ -396,8 +389,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="s-uslugi" className="section reveal" onMouseMove={handleSpotlight}>
-          <div className="section-spotlight" />
+        <section id="s-uslugi" className="section reveal">
           <div className="uslugi-frame">
             <div className="section-head section-head--center stagger" style={{ ["--i" as string]: 0 }}>
               <h2 className="section-title">Услуги</h2>
@@ -460,8 +452,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="s-studio" className="section reveal" onMouseMove={handleSpotlight}>
-          <div className="section-spotlight" />
+        <section id="s-studio" className="section reveal">
           <div className="section-head stagger" style={{ ["--i" as string]: 0 }}>
             <h2 className="section-title">Студия</h2>
           </div>
@@ -505,8 +496,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="s-booking" className="section reveal" onMouseMove={handleSpotlight}>
-          <div className="section-spotlight" />
+        <section id="s-booking" className="section reveal">
           <div className="booking-frame">
             <div className="section-head section-head--center stagger" style={{ ["--i" as string]: 0 }}>
               <h2 className="section-title">Как записаться</h2>
@@ -533,8 +523,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="s-raboty" className="section reveal" onMouseMove={handleSpotlight}>
-          <div className="section-spotlight" />
+        <section id="s-raboty" className="section reveal">
           <div className="section-head stagger" style={{ ["--i" as string]: 0 }}>
             <h2 className="section-title">Работы</h2>
           </div>
@@ -644,8 +633,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="s-faq" className="section reveal" onMouseMove={handleSpotlight}>
-          <div className="section-spotlight" />
+        <section id="s-faq" className="section reveal">
           <div className="section-head section-head--center stagger" style={{ ["--i" as string]: 0 }}>
             <h2 className="section-title">Частые вопросы</h2>
           </div>
@@ -671,8 +659,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="s-kontakty" className="section reveal" onMouseMove={handleSpotlight}>
-          <div className="section-spotlight" />
+        <section id="s-kontakty" className="section reveal">
           <div className="section-head stagger" style={{ ["--i" as string]: 0 }}>
             <h2 className="section-title">Контакты</h2>
           </div>
