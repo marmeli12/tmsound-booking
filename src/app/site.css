@@ -292,7 +292,7 @@
   .tm-site .studio-photos .wide { grid-column: 1 / span 2; height: 260px; }
 
   /* работы */
-  .tm-site .raboty-body { display: grid; grid-template-columns: 1fr 300px; gap: 64px; align-items: start; }
+  .tm-site .raboty-body { display: grid; grid-template-columns: 1fr 420px; gap: 64px; align-items: start; }
   .tm-site .works-lead { font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(236,231,223,0.45); margin-bottom: 28px; }
   .tm-site .name-wall { font-family: 'Jost', sans-serif; font-size: 27px; line-height: 1.55; font-weight: 400; color: rgba(236,231,223,0.42); }
   .tm-site .name-wall .featured { color: #d98a3d; font-weight: 500; }
@@ -300,16 +300,34 @@
   .tm-site .works-foot { display: flex; align-items: center; gap: 8px; margin-top: 30px; font-size: 12px; color: rgba(236,231,223,0.45); }
   .tm-site .legend-dot { width: 8px; height: 8px; border-radius: 50%; background: #d98a3d; display: inline-block; }
 
-  .tm-site .raboty-photos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-  .tm-site .raboty-photo {
-    aspect-ratio: 1; overflow: hidden; border-radius: 4px; border: 1px solid rgba(236,231,223,0.12);
+  /* карусель фото артистов — кроссфейд между слоями + медленный zoom,
+     ник артиста и точки-индикаторы под фото */
+  .tm-site .raboty-carousel { width: 100%; max-width: 420px; }
+  .tm-site .raboty-carousel-frame {
+    position: relative; width: 100%; aspect-ratio: 1; overflow: hidden;
+    border-radius: 4px; border: 1px solid rgba(236,231,223,0.14); background: rgba(236,231,223,0.02);
   }
-  .tm-site .raboty-photo img {
-    width: 100%; height: 100%; object-fit: cover; display: block;
-    filter: grayscale(0.25) contrast(1.05) brightness(0.96);
-    transition: filter 0.3s ease, transform 0.4s ease;
+  .tm-site .raboty-carousel-img {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;
+    opacity: 0; transform: scale(1.05);
+    filter: grayscale(0.2) contrast(1.05) brightness(0.94);
+    transition: opacity 1s cubic-bezier(.16,.8,.24,1), transform 5s ease;
   }
-  .tm-site .raboty-photo:hover img { filter: grayscale(0) contrast(1.02) brightness(1.02); transform: scale(1.04); }
+  .tm-site .raboty-carousel-img.is-active { opacity: 1; transform: scale(1); z-index: 1; }
+  .tm-site .raboty-carousel-name { position: relative; height: 22px; margin-top: 18px; text-align: center; }
+  .tm-site .raboty-carousel-name-item {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-family: 'Jost', sans-serif; font-size: 16px; letter-spacing: 0.05em; text-transform: uppercase;
+    color: #d98a3d; opacity: 0; transition: opacity 0.6s ease;
+  }
+  .tm-site .raboty-carousel-name-item.is-active { opacity: 1; }
+  .tm-site .raboty-carousel-dots { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
+  .tm-site .raboty-carousel-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: rgba(236,231,223,0.28);
+    border: none; padding: 0; cursor: pointer; transition: background 0.25s ease, transform 0.25s ease;
+  }
+  .tm-site .raboty-carousel-dot:hover { background: rgba(217,138,61,0.6); }
+  .tm-site .raboty-carousel-dot.active { background: #d98a3d; transform: scale(1.35); }
 
   /* до/после сведения */
   .tm-site .ab-section { margin-top: 56px; padding-top: 40px; border-top: 1px solid rgba(236,231,223,0.12); text-align: center; }
@@ -519,7 +537,7 @@
   .tm-site .uslugi-body { grid-template-columns: 1fr; gap: 40px; }
   .tm-site .studio-grid { grid-template-columns: 1fr; gap: 40px; }
   .tm-site .raboty-body { grid-template-columns: 1fr; gap: 32px; }
-  .tm-site .raboty-photos { grid-template-columns: repeat(4, 1fr); max-width: 480px; }
+  .tm-site .raboty-carousel { max-width: 340px; }
   .tm-site .compare-table { grid-template-columns: 1fr; max-width: 480px; }
   .tm-site .abon-frame { margin-top: 48px; }
   .tm-site .booking-steps { grid-template-columns: 1fr; gap: 32px; }
@@ -562,7 +580,8 @@
   .tm-site .stat-label { max-width: 100%; }
 
   .tm-site .name-wall { font-size: 18px; }
-  .tm-site .raboty-photos { grid-template-columns: repeat(3, 1fr); max-width: 100%; gap: 10px; }
+  .tm-site .raboty-carousel { max-width: 280px; }
+  .tm-site .raboty-carousel-name-item { font-size: 14px; }
 
   .tm-site .ab-examples { max-width: 100%; }
   .tm-site .ab-example { padding: 16px; }

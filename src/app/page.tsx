@@ -92,11 +92,11 @@ const AB_EXAMPLES = [
 ];
 
 const ARTIST_PHOTOS = [
-  { src: "/artist-1.jpg", alt: "Артист, записывавшийся в T&M Sound" },
-  { src: "/artist-2.jpg", alt: "Артист, записывавшийся в T&M Sound" },
-  { src: "/artist-3.jpg", alt: "Артистка, записывавшаяся в T&M Sound" },
-  { src: "/artist-4.jpg", alt: "LUMI — записывалась в T&M Sound" },
-  { src: "/artist-5.jpg", alt: "Артист, записывавшийся в T&M Sound" },
+  { src: "/artist-1.jpg", name: "Og Buda" },
+  { src: "/artist-2.jpg", name: "Lizer" },
+  { src: "/artist-3.jpg", name: "Lustova" },
+  { src: "/artist-4.jpg", name: "LUMI" },
+  { src: "/artist-5.jpg", name: "Blockkid" },
 ];
 
 const AVITO_LINK =
@@ -212,6 +212,7 @@ export default function HomePage() {
   const [openFaq, setOpenFaq] = useState<Record<string, boolean>>({});
   const [rulesOpen, setRulesOpen] = useState(false);
   const [openAbonId, setOpenAbonId] = useState<string | null>(null);
+  const [artistIndex, setArtistIndex] = useState(0);
 
   // Смена цитаты каждые 5.4с, с плавным затуханием на 0.5с — как в макете.
   useEffect(() => {
@@ -227,6 +228,16 @@ export default function HomePage() {
       clearInterval(interval);
       if (swapTimeout) clearTimeout(swapTimeout);
     };
+  }, []);
+
+  // Карусель фото артистов в разделе «Работы» — автоматически перелистывается
+  // каждые 3.2с, кроссфейдом (сама смена картинок анимируется через CSS-
+  // переход opacity, тут только двигаем индекс).
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setArtistIndex((i) => (i + 1) % ARTIST_PHOTOS.length);
+    }, 3200);
+    return () => clearInterval(interval);
   }, []);
 
   // Скроллспай (подсветка текущего раздела в боковой рейке) + плавное
@@ -554,12 +565,39 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="raboty-photos stagger img-reveal" style={{ ["--i" as string]: 2 }}>
-              {ARTIST_PHOTOS.map((p) => (
-                <div key={p.src} className="raboty-photo">
-                  <img src={assetPath(p.src)} alt={p.alt} loading="lazy" />
-                </div>
-              ))}
+            <div className="raboty-carousel stagger img-reveal" style={{ ["--i" as string]: 2 }}>
+              <div className="raboty-carousel-frame">
+                {ARTIST_PHOTOS.map((a, i) => (
+                  <img
+                    key={a.src}
+                    src={assetPath(a.src)}
+                    alt={a.name}
+                    loading="lazy"
+                    className={`raboty-carousel-img${i === artistIndex ? " is-active" : ""}`}
+                  />
+                ))}
+              </div>
+              <div className="raboty-carousel-name">
+                {ARTIST_PHOTOS.map((a, i) => (
+                  <span
+                    key={a.src}
+                    className={`raboty-carousel-name-item${i === artistIndex ? " is-active" : ""}`}
+                  >
+                    {a.name}
+                  </span>
+                ))}
+              </div>
+              <div className="raboty-carousel-dots">
+                {ARTIST_PHOTOS.map((a, i) => (
+                  <button
+                    key={a.src}
+                    type="button"
+                    className={`raboty-carousel-dot${i === artistIndex ? " active" : ""}`}
+                    aria-label={a.name}
+                    onClick={() => setArtistIndex(i)}
+                  />
+                ))}
+              </div>
             </div>
           </div>
 
