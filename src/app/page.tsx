@@ -14,7 +14,7 @@
  * страница /booking).
  */
 
-import { useEffect, useState, type MouseEvent as ReactMouseEvent } from "react";
+import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
 import "./site.css";
 import BookingWizard from "@/components/booking/BookingWizard";
 import { assetPath } from "@/lib/apiPath";
@@ -67,27 +67,34 @@ const SERVICES_PRODUCTION = [
   },
 ];
 
+// Декоративная "волна" под плеером — просто статичный узор, не привязан
+// к реальной форме сигнала (это бы требовало анализировать каждый файл).
+// Меняется только цвет/чуть высота в зависимости от того, что выбрано —
+// "до" или "после" — чтобы визуально показать разницу.
+const WAVE_BEFORE = [8, 11, 9, 13, 10, 8, 12, 9, 14, 10, 9, 13, 11, 8, 10, 14, 9, 12, 10, 8, 11, 9, 13, 10, 9, 12, 8, 10];
+const WAVE_AFTER = [10, 18, 13, 28, 16, 10, 24, 14, 34, 19, 12, 30, 20, 10, 15, 32, 17, 26, 14, 9, 22, 12, 29, 17, 11, 25, 10, 13];
+
 const AB_EXAMPLES = [
   {
     id: "ex1",
     idx: "01",
-    label: "Пример 1",
-    before: [8, 11, 9, 13, 10, 8, 12, 9, 14, 10, 9, 13, 11, 8, 10, 14, 9, 12, 10, 8, 11, 9, 13, 10, 9, 12, 8, 10],
-    after: [10, 18, 13, 28, 16, 10, 24, 14, 34, 19, 12, 30, 20, 10, 15, 32, 17, 26, 14, 9, 22, 12, 29, 17, 11, 25, 10, 13],
+    label: "Объятия ветра",
+    before: "/ab-obyatiya-vetra-before.mp3",
+    after: "/ab-obyatiya-vetra-after.mp3",
   },
   {
     id: "ex2",
     idx: "02",
-    label: "Пример 2",
-    before: [7, 10, 8, 11, 9, 7, 10, 8, 12, 9, 8, 11, 10, 7, 9, 12, 8, 10, 9, 7, 10, 8, 11, 9, 8, 10, 7, 9],
-    after: [9, 21, 11, 31, 14, 8, 27, 12, 33, 17, 10, 29, 18, 9, 13, 30, 15, 24, 12, 8, 20, 11, 27, 15, 10, 23, 9, 12],
+    label: "Повсюду",
+    before: "/ab-povsyudu-before.mp3",
+    after: "/ab-povsyudu-after.mp3",
   },
   {
     id: "ex3",
     idx: "03",
-    label: "Пример 3",
-    before: [9, 12, 10, 14, 11, 9, 13, 10, 15, 11, 10, 14, 12, 9, 11, 15, 10, 13, 11, 9, 12, 10, 14, 11, 10, 13, 9, 11],
-    after: [11, 15, 20, 26, 12, 18, 10, 32, 15, 22, 9, 28, 19, 12, 16, 34, 13, 25, 11, 17, 10, 30, 14, 20, 9, 26, 12, 15],
+    label: "Романова — Из-за неё",
+    before: "/ab-romanova-before.mp3",
+    after: "/ab-romanova-after.mp3",
   },
 ];
 
@@ -197,11 +204,78 @@ function handleBookClick(e: ReactMouseEvent<HTMLAnchorElement>) {
   scrollToSection("s-booking");
 }
 
+// Один пример "до/после": держит свой <audio> и переключает у него src при
+// клике на До/После, сохраняя текущую позицию воспроизведения и то, играло
+// ли аудио — чтобы переключение звучало мгновенно, без потери места в треке.
+function AbExamplePlayer({ ex }: { ex: (typeof AB_EXAMPLES)[number] }) {
+  const [st, setSt] = useState<AbState>("before");
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const resumeRef = useRef<{ time: number; playing: boolean } | null>(null);
+
+  function switchTo(next: AbState) {
+    if (next === st) return;
+    const audio = audioRef.current;
+    resumeRef.current = audio ? { time: audio.currentTime, playing: !audio.paused } : null;
+    setSt(next);
+  }
+
+  // После смены src браузер сбрасывает позицию — возвращаем её и, если
+  // трек играл, продолжаем воспроизведение с того же места.
+  useEffect(() => {
+    const audio = audioRef.current;
+    const resume = resumeRef.current;
+    if (!audio || !resume) return;
+    resumeRef.current = null;
+    const apply = () => {
+      try {
+        audio.currentTime = resume.time;
+      } catch {
+        // позиция может быть ещё недоступна — не критично, просто начнёт сначала
+      }
+      if (resume.playing) audio.play().catch(() => {});
+    };
+    if (audio.readyState >= 1) apply();
+    else audio.addEventListener("loadedmetadata", apply, { once: true });
+  }, [st]);
+
+  const bars = st === "after" ? WAVE_AFTER : WAVE_BEFORE;
+
+  return (
+    <div className="ab-example">
+      <div className="ab-example-head">
+        <div className="ab-example-title">
+          <span className="ab-example-idx">{ex.idx}</span>
+          <span className="ab-example-name">{ex.label}</span>
+        </div>
+        <div className="ab-toggle">
+          <button className={st === "before" ? "active" : ""} onClick={() => switchTo("before")}>
+            До
+          </button>
+          <button className={st === "after" ? "active" : ""} onClick={() => switchTo("after")}>
+            После
+          </button>
+        </div>
+      </div>
+      <div className={`ab-wave${st === "after" ? " state-after" : ""}`}>
+        {bars.map((h, i) => (
+          <span key={i} style={{ height: `${h}px` }} />
+        ))}
+      </div>
+      <audio
+        ref={audioRef}
+        className="ab-audio"
+        src={assetPath(st === "after" ? ex.after : ex.before)}
+        controls
+        preload="none"
+      />
+    </div>
+  );
+}
+
 export default function HomePage() {
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [quoteFading, setQuoteFading] = useState(false);
   const [activeId, setActiveId] = useState("s-hero");
-  const [abStates, setAbStates] = useState<Record<string, AbState>>({ ex1: "before", ex2: "before", ex3: "before" });
   const [openServices, setOpenServices] = useState<Record<string, boolean>>({});
   const [openFaq, setOpenFaq] = useState<Record<string, boolean>>({});
   const [rulesOpen, setRulesOpen] = useState(false);
@@ -595,41 +669,10 @@ export default function HomePage() {
               Послушайте разницу — <span className="accent">до и после сведения</span>
             </div>
             <div className="ab-examples">
-              {AB_EXAMPLES.map((ex) => {
-                const st = abStates[ex.id] ?? "before";
-                const bars = st === "after" ? ex.after : ex.before;
-                return (
-                  <div key={ex.id} className="ab-example">
-                    <div className="ab-example-head">
-                      <div className="ab-example-title">
-                        <span className="ab-example-idx">{ex.idx}</span>
-                        <span className="ab-example-name">{ex.label}</span>
-                      </div>
-                      <div className="ab-toggle">
-                        <button
-                          className={st === "before" ? "active" : ""}
-                          onClick={() => setAbStates((prev) => ({ ...prev, [ex.id]: "before" }))}
-                        >
-                          До
-                        </button>
-                        <button
-                          className={st === "after" ? "active" : ""}
-                          onClick={() => setAbStates((prev) => ({ ...prev, [ex.id]: "after" }))}
-                        >
-                          После
-                        </button>
-                      </div>
-                    </div>
-                    <div className={`ab-wave${st === "after" ? " state-after" : ""}`}>
-                      {bars.map((h, i) => (
-                        <span key={i} style={{ height: `${h}px` }} />
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
+              {AB_EXAMPLES.map((ex) => (
+                <AbExamplePlayer key={ex.id} ex={ex} />
+              ))}
             </div>
-            <span className="ab-note">[РЕАЛЬНЫЕ АУДИО-ПРИМЕРЫ — добавим, когда пришлёшь треки]</span>
           </div>
         </section>
 
