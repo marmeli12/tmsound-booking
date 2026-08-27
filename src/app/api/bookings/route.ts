@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { BookingConflictError, createBooking } from "@/lib/bookingActions";
-import { isPastDate } from "@/lib/time";
+import { isPastDate, nowTimeStr, todayDateStr } from "@/lib/time";
 
 const bodySchema = z.object({
   serviceId: z.string().min(1),
@@ -44,6 +44,13 @@ export async function POST(req: NextRequest) {
 
   if (isPastDate(input.dateStr)) {
     return NextResponse.json({ error: "Нельзя записаться на прошедшую дату" }, { status: 400 });
+  }
+  // Дата сегодняшняя, но время на неё уже прошло (например, сейчас 15:00,
+  // а прислали 12:00) — раньше это не проверялось, и заявку можно было
+  // создать "на прошедшее время". См. также getHourlyAvailability, которая
+  // теперь и на шаге выбора времени не предлагает такие часы.
+  if (input.dateStr === todayDateStr() && input.startTime <= nowTimeStr()) {
+    return NextResponse.json({ error: "Это время уже прошло — выберите другое" }, { status: 400 });
   }
 
   try {
