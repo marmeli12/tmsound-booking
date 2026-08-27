@@ -54,6 +54,17 @@ export function clientRejectedMessage(): string {
   ].join("\n");
 }
 
+export function clientRescheduledMessage(b: Booking, oldDateStr: string, oldRange: string): string {
+  return [
+    "🔄 <b>ЗАПИСЬ ПЕРЕНЕСЕНА</b>",
+    "T&M Sound",
+    `Было: ${formatDateHuman(oldDateStr)}, ${oldRange}`,
+    `Стало: ${formatDateHuman(toDateStr(b.date))}, ${rangeLine(b)}`,
+    "",
+    "Если новое время не подходит — напишите нам.",
+  ].join("\n");
+}
+
 export function clientCancelledMessage(b: Booking): string {
   return [
     "Ваша запись отменена.",

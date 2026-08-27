@@ -33,12 +33,16 @@ export async function workingHourStarts(dateStr: string): Promise<string[]> {
  * Календарь спрашиваем best-effort и параллельно с БД: если он недоступен
  * или не настроен, просто не участвует в результате (см. googleCalendar.ts).
  */
-async function occupiedRangesForDate(dateStr: string) {
+async function occupiedRangesForDate(dateStr: string, excludeBookingId?: string) {
   const date = new Date(`${dateStr}T00:00:00.000Z`);
 
   const [bookings, blocks, calendarBusy] = await Promise.all([
     prisma.booking.findMany({
-      where: { date, status: { in: ["PENDING", "CONFIRMED"] } },
+      where: {
+        date,
+        status: { in: ["PENDING", "CONFIRMED"] },
+        ...(excludeBookingId ? { id: { not: excludeBookingId } } : {}),
+      },
       select: { startTime: true, endTime: true },
     }),
     prisma.blockedSlot.findMany({
@@ -57,14 +61,18 @@ function hourOverlapsRange(hourStart: string, rangeStart: string, rangeEnd: stri
   return hourStart < rangeEnd && rangeStart < hourEnd;
 }
 
-/** Почасовая доступность на дату — то, что видит клиент на шаге 3. */
-export async function getHourlyAvailability(dateStr: string): Promise<HourSlot[]> {
+/**
+ * Почасовая доступность на дату — то, что видит клиент на шаге 3.
+ * excludeBookingId — при переносе уже существующей брони её собственный
+ * (ещё не сдвинутый) интервал не должен считаться "занятым" сам собой.
+ */
+export async function getHourlyAvailability(dateStr: string, excludeBookingId?: string): Promise<HourSlot[]> {
   if (isPastDate(dateStr)) return [];
 
   const starts = await workingHourStarts(dateStr);
   if (starts.length === 0) return [];
 
-  const occupied = await occupiedRangesForDate(dateStr);
+  const occupied = await occupiedRangesForDate(dateStr, excludeBookingId);
 
   return starts.map((time) => ({
     time,
@@ -80,8 +88,8 @@ export async function getHourlyAvailability(dateStr: string): Promise<HourSlot[]
  * ограничение только естественное: сколько подряд свободных часов
  * осталось в рабочем дне.
  */
-export async function getAvailableDurations(dateStr: string, startTime: string): Promise<number[]> {
-  const slots = await getHourlyAvailability(dateStr);
+export async function getAvailableDurations(dateStr: string, startTime: string, excludeBookingId?: string): Promise<number[]> {
+  const slots = await getHourlyAvailability(dateStr, excludeBookingId);
   const byTime = new Map(slots.map((s) => [s.time, s.free]));
 
   const result: number[] = [];

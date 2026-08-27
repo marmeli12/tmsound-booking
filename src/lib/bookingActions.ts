@@ -1,6 +1,6 @@
 import { prisma } from "./db";
 import { computeRange } from "./availability";
-import { createCalendarEvent, deleteCalendarEvent } from "./googleCalendar";
+import { createCalendarEvent, deleteCalendarEvent, updateCalendarEvent } from "./googleCalendar";
 import { getSettings } from "./settings";
 import {
   adminNewRequestMessage,
@@ -9,6 +9,7 @@ import {
   clientConfirmedMessage,
   clientPendingMessage,
   clientRejectedMessage,
+  clientRescheduledMessage,
 } from "./notifications";
 import { sendMessage } from "./telegram";
 
@@ -226,6 +227,68 @@ export async function cancelBooking(bookingId: string) {
   }
 
   return { ok: true as const, booking: updated };
+}
+
+/**
+ * Переносит уже существующую заявку/бронь на новую дату и время, сохраняя
+ * ту же услугу и продолжительность (только сдвигает интервал). Работает
+ * и для PENDING, и для CONFIRMED — REJECTED/CANCELLED переносить нельзя.
+ */
+export async function rescheduleBooking(bookingId: string, dateStr: string, startTime: string) {
+  const booking = await prisma.booking.findUnique({
+    where: { id: bookingId },
+    include: { service: true },
+  });
+  if (!booking) return { ok: false as const, reason: "not_found" as const };
+  if (booking.status !== "PENDING" && booking.status !== "CONFIRMED") {
+    return { ok: false as const, reason: "not_active" as const, booking };
+  }
+
+  const oldDateStr = booking.date.toISOString().slice(0, 10);
+  const oldRange = `${booking.startTime}–${booking.endTime}`;
+
+  const { endTime, startsAt, endsAt } = computeRange({
+    dateStr,
+    startTime,
+    duration: booking.duration,
+  });
+
+  const date = new Date(`${dateStr}T00:00:00.000Z`);
+
+  // Та же двойная проверка, что и при создании: ручные блокировки не
+  // накрыты EXCLUDE-ограничением в БД, поэтому проверяем явно.
+  const blockConflict = await prisma.blockedSlot.findFirst({
+    where: { date, startTime: { lt: endTime }, endTime: { gt: startTime } },
+  });
+  if (blockConflict) {
+    return { ok: false as const, reason: "conflict" as const, booking };
+  }
+
+  let updated;
+  try {
+    updated = await prisma.booking.update({
+      where: { id: bookingId },
+      data: { date, startTime, endTime, startsAt, endsAt },
+      include: { service: true },
+    });
+  } catch (err) {
+    // Пересечение с ДРУГОЙ бронью — EXCLUDE-ограничение отклонит апдейт
+    // атомарно, себя саму (эту же строку) оно не сравнивает.
+    if (isOverlapConstraintError(err)) {
+      return { ok: false as const, reason: "conflict" as const, booking };
+    }
+    throw err;
+  }
+
+  if (booking.googleEventId) {
+    await updateCalendarEvent(booking.googleEventId, updated);
+  }
+
+  if (updated.telegramChatId) {
+    await sendMessage(updated.telegramChatId, clientRescheduledMessage(updated, oldDateStr, oldRange));
+  }
+
+  return { ok: true as const, booking: updated, oldDateStr, oldRange };
 }
 
 export { adminSlotTakenWarning };

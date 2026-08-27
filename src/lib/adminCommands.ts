@@ -1,7 +1,7 @@
 import { prisma } from "./db";
-import { getHourlyAvailability } from "./availability";
+import { getAvailableDurations, getHourlyAvailability } from "./availability";
 import type { InlineButton } from "./telegram";
-import { formatDateHuman, todayDateStr, zonedDateTimeToUtc } from "./time";
+import { addHour, formatDateHuman, todayDateStr, zonedDateTimeToUtc } from "./time";
 
 /** Текст + (опционально) кнопки под ним — общий формат ответа админ-команд. */
 export type CommandReply = { text: string; buttons?: InlineButton[][] };
@@ -80,21 +80,30 @@ function formatBookingLine(b: BookingRow): string {
 }
 
 /**
- * Кнопки действий для одной брони. PENDING получает ✅/❌ прямо в списке
- * (не только на исходном уведомлении о заявке) — так с ней можно
- * разобраться, не листая историю чата. CONFIRMED получает ❌ Отменить.
- * Имя клиента обрезаем, чтобы уложиться в лимит текста кнопки Telegram.
+ * Кнопки действий для одной брони — может быть НЕСКОЛЬКО рядов кнопок.
+ * PENDING получает ✅/❌ прямо в списке (не только на исходном уведомлении
+ * о заявке) — так с ней можно разобраться, не листая историю чата.
+ * CONFIRMED получает ❌ Отменить. Обе активные брони получают ✏️ Перенести
+ * отдельным рядом — открывает выбор новой даты/времени (см. rs:d/rs:t/rs:c
+ * в webhook-обработчике). Имя клиента обрезаем, чтобы уложиться в лимит
+ * текста кнопки Telegram.
  */
-function actionButtonsRow(b: BookingRow): InlineButton[] | null {
+function actionButtonsRow(b: BookingRow): InlineButton[][] | null {
   const label = `${b.startTime} · ${b.clientName}`.slice(0, 40);
+  const rescheduleRow: InlineButton[] = [
+    { text: `✏️ Перенести ${label}`.slice(0, 60), callback_data: `rs:d:${b.id}` },
+  ];
   if (b.status === "PENDING") {
     return [
-      { text: `✅ ${label}`, callback_data: `confirm:${b.id}` },
-      { text: "❌", callback_data: `reject:${b.id}` },
+      [
+        { text: `✅ ${label}`, callback_data: `confirm:${b.id}` },
+        { text: "❌", callback_data: `reject:${b.id}` },
+      ],
+      rescheduleRow,
     ];
   }
   if (b.status === "CONFIRMED") {
-    return [{ text: `❌ Отменить ${label}`.slice(0, 60), callback_data: `cancel:${b.id}` }];
+    return [[{ text: `❌ Отменить ${label}`.slice(0, 60), callback_data: `cancel:${b.id}` }], rescheduleRow];
   }
   return null;
 }
@@ -105,7 +114,7 @@ export async function handleDayCommand(dateStr: string): Promise<CommandReply> {
   if (bookings.length === 0) return { text: `${header}\n\nНа этот день записей нет.` };
   return {
     text: `${header}\n\n${bookings.map(formatBookingLine).join("\n")}`,
-    buttons: bookings.map(actionButtonsRow).filter((r): r is InlineButton[] => r !== null),
+    buttons: bookings.flatMap((b) => actionButtonsRow(b) ?? []),
   };
 }
 
@@ -119,8 +128,8 @@ export async function handleWeekCommand(): Promise<CommandReply> {
     lines.push(`${formatDateHuman(dateStr)}${bookings.length === 0 ? " — свободно" : ""}`);
     for (const b of bookings) {
       lines.push(`  ${formatBookingLine(b)}`);
-      const row = actionButtonsRow(b);
-      if (row) buttons.push(row);
+      const rows = actionButtonsRow(b);
+      if (rows) buttons.push(...rows);
     }
   }
   return { text: lines.join("\n"), buttons };
@@ -140,7 +149,7 @@ export async function handleUpcomingCommand(limit = 10): Promise<CommandReply> {
   }
   return {
     text: lines.join("\n"),
-    buttons: bookings.map(actionButtonsRow).filter((r): r is InlineButton[] => r !== null),
+    buttons: bookings.flatMap((b) => actionButtonsRow(b) ?? []),
   };
 }
 
@@ -190,7 +199,7 @@ export async function handlePendingList(): Promise<CommandReply> {
   }
   return {
     text: lines.join("\n"),
-    buttons: bookings.map(actionButtonsRow).filter((r): r is InlineButton[] => r !== null),
+    buttons: bookings.flatMap((b) => actionButtonsRow(b) ?? []),
   };
 }
 
@@ -245,4 +254,107 @@ export async function createBlockedSlot(input: {
       reason: input.reason,
     },
   });
+}
+
+// --- Перенос брони (reschedule) ---------------------------------------
+//
+// Полностью кнопочный флоу без хранения состояния диалога — вся нужная
+// информация (id брони, выбранная дата, выбранное время) едет прямо в
+// callback_data следующего шага:
+//   rs:d:<bookingId>              — показать список дней (выбор даты)
+//   rs:t:<bookingId>:<dateStr>    — показать список часов на эту дату
+//   rs:c:<bookingId>:<dateStr>:<startTime> — подтверждение и сам перенос
+// (см. обработку в src/app/api/telegram/webhook/route.ts)
+
+const RESCHEDULE_DAYS_AHEAD = 14;
+
+async function bookingForReschedule(bookingId: string) {
+  return prisma.booking.findUnique({ where: { id: bookingId }, include: { service: true } });
+}
+
+/** Экран 1: список ближайших дней — на какую дату переносим бронь. */
+export async function handleRescheduleDayList(bookingId: string): Promise<CommandReply> {
+  const booking = await bookingForReschedule(bookingId);
+  if (!booking) return { text: "Не нашли эту бронь — возможно, её уже отменили." };
+  if (booking.status !== "PENDING" && booking.status !== "CONFIRMED") {
+    return { text: "Эту бронь уже нельзя перенести — она не активна (отменена/отклонена)." };
+  }
+
+  const today = todayDateStr();
+  const buttons: InlineButton[][] = [];
+  let row: InlineButton[] = [];
+  for (let i = 0; i < RESCHEDULE_DAYS_AHEAD; i++) {
+    const dateStr = addDays(today, i);
+    row.push({ text: formatDateShort(dateStr), callback_data: `rs:t:${bookingId}:${dateStr}` });
+    if (row.length === 3) {
+      buttons.push(row);
+      row = [];
+    }
+  }
+  if (row.length) buttons.push(row);
+
+  const currentDateStr = booking.date.toISOString().slice(0, 10);
+  return {
+    text: [
+      "✏️ <b>Перенос записи</b>",
+      `👤 ${booking.clientName} · ${booking.service.name} · ${booking.duration} ч`,
+      `Сейчас: ${formatDateHuman(currentDateStr)}, ${booking.startTime}–${booking.endTime}`,
+      "",
+      "Выберите новую дату:",
+    ].join("\n"),
+    buttons,
+  };
+}
+
+/** Экран 2: доступные часы начала на выбранную дату (с той же продолжительностью, что и была). */
+export async function handleRescheduleTimeList(bookingId: string, dateStr: string): Promise<CommandReply> {
+  const booking = await bookingForReschedule(bookingId);
+  if (!booking) return { text: "Не нашли эту бронь — возможно, её уже отменили." };
+  if (booking.status !== "PENDING" && booking.status !== "CONFIRMED") {
+    return { text: "Эту бронь уже нельзя перенести — она не активна (отменена/отклонена)." };
+  }
+
+  const backButton: InlineButton[] = [{ text: "🔙 Другая дата", callback_data: `rs:d:${bookingId}` }];
+
+  // excludeBookingId — собственный (ещё не сдвинутый) интервал этой же
+  // брони не должен мешать выбрать время в тот же день.
+  const slots = await getHourlyAvailability(dateStr, bookingId);
+  if (slots.length === 0) {
+    return {
+      text: `${formatDateHuman(dateStr)} — студия в этот день не работает.`,
+      buttons: [backButton],
+    };
+  }
+
+  const fitting: string[] = [];
+  for (const slot of slots) {
+    if (!slot.free) continue;
+    const durations = await getAvailableDurations(dateStr, slot.time, bookingId);
+    if (durations.includes(booking.duration)) fitting.push(slot.time);
+  }
+
+  if (fitting.length === 0) {
+    return {
+      text: `${formatDateHuman(dateStr)} — нет свободного окна на ${booking.duration} ч. Попробуйте другую дату.`,
+      buttons: [backButton],
+    };
+  }
+
+  const buttons: InlineButton[][] = [];
+  let row: InlineButton[] = [];
+  for (const time of fitting) {
+    const end = addHour(time, booking.duration);
+    row.push({ text: `${time}–${end}`, callback_data: `rs:c:${bookingId}:${dateStr}:${time}` });
+    if (row.length === 3) {
+      buttons.push(row);
+      row = [];
+    }
+  }
+  if (row.length) buttons.push(row);
+  buttons.push(backButton);
+
+  return {
+    text: `✏️ ${formatDateHuman(dateStr)} — выберите новое время начала (продолжительность ${booking.duration} ч сохраняется):`,
+    buttons,
+  };
 }

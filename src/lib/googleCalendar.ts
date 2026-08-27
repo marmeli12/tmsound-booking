@@ -124,6 +124,24 @@ export async function createCalendarEvent(booking: BookingWithService): Promise<
   }
 }
 
+/** Двигает время события при переносе брони. Тихо игнорирует ошибки (например, если событие уже удалили вручную). */
+export async function updateCalendarEvent(eventId: string, booking: BookingWithService): Promise<void> {
+  const client = getCalendarClient();
+  if (!client) return;
+  try {
+    await client.calendar.events.patch({
+      calendarId: client.id,
+      eventId,
+      requestBody: {
+        start: { dateTime: booking.startsAt.toISOString(), timeZone: STUDIO_TIMEZONE },
+        end: { dateTime: booking.endsAt.toISOString(), timeZone: STUDIO_TIMEZONE },
+      },
+    });
+  } catch (err) {
+    console.error("Google Calendar event update failed:", err);
+  }
+}
+
 /** Удаляет событие при отмене брони. Тихо игнорирует ошибки (например, если событие уже удалили вручную). */
 export async function deleteCalendarEvent(eventId: string): Promise<void> {
   const client = getCalendarClient();
