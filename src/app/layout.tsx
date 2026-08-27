@@ -2,9 +2,64 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
 
+const SITE_URL = "https://www.tmsound.site";
+const SITE_TITLE = "T&M Sound — студия звукозаписи, Пирогова 17";
+const SITE_DESCRIPTION =
+  "Запись, сведение и мастеринг в Санкт-Петербурге. Пишем вокал, сводим и мастерим — работаем допоздна, по записи.";
+
 export const metadata: Metadata = {
-  title: "T&M Sound — студия звукозаписи, Пирогова 17",
-  description: "Запись, сведение и мастеринг в Санкт-Петербурге. Пишем вокал, сводим и мастерим — работаем допоздна, по записи.",
+  metadataBase: new URL(SITE_URL),
+  title: SITE_TITLE,
+  description: SITE_DESCRIPTION,
+  keywords: [
+    "студия звукозаписи Санкт-Петербург",
+    "запись вокала СПб",
+    "сведение и мастеринг",
+    "аренда студии звукозаписи",
+    "звукозаписывающая студия",
+    "T&M Sound",
+  ],
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    type: "website",
+    locale: "ru_RU",
+    url: SITE_URL,
+    siteName: "T&M Sound",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: [{ url: "/room.jpg" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: ["/room.jpg"],
+  },
+};
+
+// Структурированные данные (schema.org) — помогают Яндексу и Google
+// показать в выдаче название, адрес и телефон студии прямо в сниппете,
+// а не только синюю ссылку с описанием.
+const STRUCTURED_DATA = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  name: "T&M Sound",
+  image: `${SITE_URL}/room.jpg`,
+  url: SITE_URL,
+  telephone: "+7-918-944-36-97",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Пирогова, 17",
+    addressLocality: "Санкт-Петербург",
+    addressCountry: "RU",
+  },
+  sameAs: ["https://t.me/tms0und", "https://t.me/tmsounddd", "https://www.instagram.com/tm__sound/"],
 };
 
 const YANDEX_METRIKA_ID = 112003655;
@@ -20,6 +75,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         {children}
+
+        {/* Структурированные данные для поисковиков — см. STRUCTURED_DATA выше. */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(STRUCTURED_DATA) }}
+        />
 
         {/* Yandex.Metrika counter — next/script с afterInteractive грузит
             счётчик уже после того, как страница стала интерактивной, чтобы
