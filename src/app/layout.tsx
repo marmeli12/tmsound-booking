@@ -22,6 +22,12 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/",
   },
+  // Мета-тег подтверждения прав в Яндекс.Вебмастере — DNS-способ у Яндекса
+  // почему-то завис (сама запись при этом давно верна и видна всем DNS-
+  // серверам, включая Yandex.DNS), поэтому подтверждаем через код страницы.
+  verification: {
+    yandex: "0cac5e2f442bae6a",
+  },
   robots: {
     index: true,
     follow: true,
