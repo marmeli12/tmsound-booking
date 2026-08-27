@@ -5,15 +5,25 @@ import {
   handleDaysList,
   handleFreeCommand,
   handlePendingList,
+  handleRescheduleDayList,
+  handleRescheduleTimeList,
   handleUpcomingCommand,
   handleWeekCommand,
   mainMenuButtons,
   parseBlockArgs,
   parseDateArg,
 } from "@/lib/adminCommands";
-import { cancelBooking, confirmBooking, linkClientChat, rejectBooking, adminSlotTakenWarning } from "@/lib/bookingActions";
+import {
+  cancelBooking,
+  confirmBooking,
+  linkClientChat,
+  rejectBooking,
+  rescheduleBooking,
+  adminSlotTakenWarning,
+} from "@/lib/bookingActions";
 import { prisma } from "@/lib/db";
 import { answerCallbackQuery, editMessageReplyMarkup, isAdminChat, sendMessage, type InlineButton } from "@/lib/telegram";
+import { formatDateHuman } from "@/lib/time";
 
 // Telegram шлёт секретный токен в заголовке (задаётся при setWebhook,
 // см. scripts/set-webhook.ts) — так мы отсекаем любые запросы, которые
@@ -188,6 +198,61 @@ async function handleCallback(query: any) {
     } else {
       await answerCallbackQuery(query.id, "Не нашли бронь");
     }
+    return;
+  }
+
+  if (action === "rs") {
+    // Кнопочный флоу переноса брони — данные едут прямо в callback_data,
+    // серверного состояния диалога нет (см. комментарий в adminCommands.ts).
+    const parts = data.split(":");
+    const sub = parts[1];
+    const bookingId = parts[2];
+
+    if (sub === "d" && bookingId) {
+      await answerCallbackQuery(query.id);
+      const reply = await handleRescheduleDayList(bookingId);
+      await sendMessage(chatId, reply.text, withMenuButton(reply.buttons));
+      return;
+    }
+
+    if (sub === "t" && bookingId && parts[3]) {
+      await answerCallbackQuery(query.id);
+      const reply = await handleRescheduleTimeList(bookingId, parts[3]);
+      await sendMessage(chatId, reply.text, withMenuButton(reply.buttons));
+      return;
+    }
+
+    if (sub === "c" && bookingId && parts[3] && parts[4]) {
+      const dateStr = parts[3];
+      const startTime = parts[4];
+      const result = await rescheduleBooking(bookingId, dateStr, startTime);
+      if (result.ok) {
+        await answerCallbackQuery(query.id, "Перенесено ✅");
+        const b = result.booking;
+        await sendMessage(
+          chatId,
+          [
+            `🔄 Перенесено: ${b.clientName}`,
+            `Было: ${formatDateHuman(result.oldDateStr)}, ${result.oldRange}`,
+            `Стало: ${formatDateHuman(b.date.toISOString().slice(0, 10))}, ${b.startTime}–${b.endTime}`,
+          ].join("\n")
+        );
+      } else if (result.reason === "conflict") {
+        await answerCallbackQuery(query.id, "Это время уже занято");
+        await sendMessage(
+          chatId,
+          "⚠️ Это время только что заняли — выберите другое.",
+          withMenuButton([[{ text: "🔁 Выбрать время заново", callback_data: `rs:t:${bookingId}:${dateStr}` }]])
+        );
+      } else if (result.reason === "not_active") {
+        await answerCallbackQuery(query.id, "Бронь уже не активна");
+      } else {
+        await answerCallbackQuery(query.id, "Не нашли бронь");
+      }
+      return;
+    }
+
+    await answerCallbackQuery(query.id);
     return;
   }
 
