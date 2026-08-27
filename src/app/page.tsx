@@ -67,12 +67,12 @@ const SERVICES_PRODUCTION = [
   },
 ];
 
-// Декоративная "волна" под плеером — просто статичный узор, не привязан
-// к реальной форме сигнала (это бы требовало анализировать каждый файл).
-// Меняется только цвет/чуть высота в зависимости от того, что выбрано —
-// "до" или "после" — чтобы визуально показать разницу.
-const WAVE_BEFORE = [8, 11, 9, 13, 10, 8, 12, 9, 14, 10, 9, 13, 11, 8, 10, 14, 9, 12, 10, 8, 11, 9, 13, 10, 9, 12, 8, 10];
-const WAVE_AFTER = [10, 18, 13, 28, 16, 10, 24, 14, 34, 19, 12, 30, 20, 10, 15, 32, 17, 26, 14, 9, 22, 12, 29, 17, 11, 25, 10, 13];
+// Декоративная "волна" на всю ширину плеера — просто статичный узор, не
+// привязан к реальной форме сигнала (это бы требовало анализировать каждый
+// файл). Столбики слева от текущей позиции подсвечиваются акцентным цветом
+// (прогресс воспроизведения), справа остаются тусклыми.
+const WAVE_BEFORE = [8, 8, 8, 9, 9, 9, 11, 12, 9, 8, 11, 9, 13, 10, 12, 11, 20, 13, 11, 13, 8, 8, 11, 11, 11, 10, 9, 12, 12, 11, 16, 16, 13, 8, 9, 11, 11, 11, 13, 8, 12, 19, 11, 15, 9, 14, 9, 13, 15, 19, 17, 11, 8, 12, 20, 11];
+const WAVE_AFTER = [9, 18, 32, 10, 8, 26, 7, 24, 29, 7, 32, 14, 10, 10, 26, 33, 16, 21, 27, 24, 11, 20, 12, 14, 18, 14, 40, 25, 31, 21, 7, 15, 31, 10, 19, 40, 16, 20, 16, 19, 11, 25, 13, 6, 9, 22, 24, 12, 6, 12, 8, 26, 31, 18, 18, 15];
 
 const AB_EXAMPLES = [
   {
@@ -204,41 +204,104 @@ function handleBookClick(e: ReactMouseEvent<HTMLAnchorElement>) {
   scrollToSection("s-booking");
 }
 
-// Один пример "до/после": держит свой <audio> и переключает у него src при
-// клике на До/После, сохраняя текущую позицию воспроизведения и то, играло
-// ли аудио — чтобы переключение звучало мгновенно, без потери места в треке.
-function AbExamplePlayer({ ex }: { ex: (typeof AB_EXAMPLES)[number] }) {
-  const [st, setSt] = useState<AbState>("before");
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const resumeRef = useRef<{ time: number; playing: boolean } | null>(null);
+function fmtTime(s: number): string {
+  if (!isFinite(s) || s < 0) return "0:00";
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${sec.toString().padStart(2, "0")}`;
+}
 
+// Один пример "до/после": держит ДВА <audio> — на "до" и на "после" —
+// заранее подгруженных, чтобы переключение кнопкой было мгновенным (без
+// повторной загрузки файла): просто ставим паузу одному и играем другой с
+// той же позиции. `active`/`onActivate` — общий "радиоприёмник" на весь
+// блок: как только начинает играть этот пример, остальные ставятся на паузу.
+function AbExamplePlayer({
+  ex,
+  active,
+  onActivate,
+}: {
+  ex: (typeof AB_EXAMPLES)[number];
+  active: boolean;
+  onActivate: () => void;
+}) {
+  const [st, setSt] = useState<AbState>("before");
+  const [playing, setPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const beforeRef = useRef<HTMLAudioElement | null>(null);
+  const afterRef = useRef<HTMLAudioElement | null>(null);
+  const waveRef = useRef<HTMLDivElement | null>(null);
+
+  function currentAudio() {
+    return st === "before" ? beforeRef.current : afterRef.current;
+  }
+
+  // Другой пример начал играть — глушим себя.
+  useEffect(() => {
+    if (!active) {
+      beforeRef.current?.pause();
+      afterRef.current?.pause();
+    }
+  }, [active]);
+
+  function handleTimeUpdate() {
+    const a = currentAudio();
+    if (!a || !a.duration) return;
+    setProgress(a.currentTime / a.duration);
+    setDuration(a.duration);
+  }
+
+  function togglePlay() {
+    const a = currentAudio();
+    if (!a) return;
+    if (a.paused) {
+      onActivate();
+      a.play().catch(() => {});
+    } else {
+      a.pause();
+    }
+  }
+
+  // Переключение "до" ⇄ "после": второй файл уже загружен фоном, поэтому
+  // просто передаём ему текущую позицию и (если играло) продолжаем сразу.
   function switchTo(next: AbState) {
     if (next === st) return;
-    const audio = audioRef.current;
-    resumeRef.current = audio ? { time: audio.currentTime, playing: !audio.paused } : null;
+    const cur = currentAudio();
+    const nextAudio = next === "before" ? beforeRef.current : afterRef.current;
+    if (cur && nextAudio) {
+      const time = cur.currentTime;
+      const wasPlaying = !cur.paused;
+      cur.pause();
+      const apply = () => {
+        try {
+          nextAudio.currentTime = time;
+        } catch {
+          // метаданные ещё не подгрузились — не критично, начнёт сначала
+        }
+        if (wasPlaying) {
+          onActivate();
+          nextAudio.play().catch(() => {});
+        }
+      };
+      if (nextAudio.readyState >= 1) apply();
+      else nextAudio.addEventListener("loadedmetadata", apply, { once: true });
+    }
     setSt(next);
   }
 
-  // После смены src браузер сбрасывает позицию — возвращаем её и, если
-  // трек играл, продолжаем воспроизведение с того же места.
-  useEffect(() => {
-    const audio = audioRef.current;
-    const resume = resumeRef.current;
-    if (!audio || !resume) return;
-    resumeRef.current = null;
-    const apply = () => {
-      try {
-        audio.currentTime = resume.time;
-      } catch {
-        // позиция может быть ещё недоступна — не критично, просто начнёт сначала
-      }
-      if (resume.playing) audio.play().catch(() => {});
-    };
-    if (audio.readyState >= 1) apply();
-    else audio.addEventListener("loadedmetadata", apply, { once: true });
-  }, [st]);
+  function seekTo(clientX: number) {
+    const el = waveRef.current;
+    const a = currentAudio();
+    if (!el || !a || !a.duration) return;
+    const rect = el.getBoundingClientRect();
+    const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+    a.currentTime = ratio * a.duration;
+    setProgress(ratio);
+  }
 
   const bars = st === "after" ? WAVE_AFTER : WAVE_BEFORE;
+  const playedBars = Math.round(progress * bars.length);
 
   return (
     <div className="ab-example">
@@ -256,17 +319,50 @@ function AbExamplePlayer({ ex }: { ex: (typeof AB_EXAMPLES)[number] }) {
           </button>
         </div>
       </div>
-      <div className={`ab-wave${st === "after" ? " state-after" : ""}`}>
-        {bars.map((h, i) => (
-          <span key={i} style={{ height: `${h}px` }} />
-        ))}
+
+      <div className="ab-player">
+        <button type="button" className="ab-play" onClick={togglePlay} aria-label={playing ? "Пауза" : "Слушать"}>
+          {playing ? (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="4" width="5" height="16" /><rect x="14" y="4" width="5" height="16" /></svg>
+          ) : (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l15 8-15 8V4z" /></svg>
+          )}
+        </button>
+
+        <div className="ab-wave-track" ref={waveRef} onClick={(e) => seekTo(e.clientX)}>
+          <div className={`ab-wave${st === "after" ? " state-after" : ""}`}>
+            {bars.map((h, i) => (
+              <span key={i} className={i < playedBars ? "is-played" : ""} style={{ height: `${h}px` }} />
+            ))}
+          </div>
+        </div>
+
+        <div className="ab-time">
+          {fmtTime(progress * duration)} / {fmtTime(duration)}
+        </div>
       </div>
+
       <audio
-        ref={audioRef}
-        className="ab-audio"
-        src={assetPath(st === "after" ? ex.after : ex.before)}
-        controls
-        preload="none"
+        ref={beforeRef}
+        src={assetPath(ex.before)}
+        preload="auto"
+        style={{ display: "none" }}
+        onPlay={() => { setPlaying(true); onActivate(); }}
+        onPause={() => setPlaying(false)}
+        onEnded={() => setPlaying(false)}
+        onTimeUpdate={st === "before" ? handleTimeUpdate : undefined}
+        onLoadedMetadata={st === "before" ? handleTimeUpdate : undefined}
+      />
+      <audio
+        ref={afterRef}
+        src={assetPath(ex.after)}
+        preload="auto"
+        style={{ display: "none" }}
+        onPlay={() => { setPlaying(true); onActivate(); }}
+        onPause={() => setPlaying(false)}
+        onEnded={() => setPlaying(false)}
+        onTimeUpdate={st === "after" ? handleTimeUpdate : undefined}
+        onLoadedMetadata={st === "after" ? handleTimeUpdate : undefined}
       />
     </div>
   );
@@ -276,6 +372,7 @@ export default function HomePage() {
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [quoteFading, setQuoteFading] = useState(false);
   const [activeId, setActiveId] = useState("s-hero");
+  const [activeAbId, setActiveAbId] = useState<string | null>(null);
   const [openServices, setOpenServices] = useState<Record<string, boolean>>({});
   const [openFaq, setOpenFaq] = useState<Record<string, boolean>>({});
   const [rulesOpen, setRulesOpen] = useState(false);
@@ -670,7 +767,12 @@ export default function HomePage() {
             </div>
             <div className="ab-examples">
               {AB_EXAMPLES.map((ex) => (
-                <AbExamplePlayer key={ex.id} ex={ex} />
+                <AbExamplePlayer
+                  key={ex.id}
+                  ex={ex}
+                  active={activeAbId === ex.id}
+                  onActivate={() => setActiveAbId(ex.id)}
+                />
               ))}
             </div>
           </div>

@@ -355,10 +355,28 @@
   .tm-site .ab-toggle button.active { background: #d98a3d; color: #17130c; }
   .tm-site .ab-toggle button:hover { color: #ece7df; }
   .tm-site .ab-toggle button:active { transform: scale(0.92); }
-  .tm-site .ab-wave { display: flex; align-items: center; gap: 2px; height: 40px; margin-bottom: 14px; }
-  .tm-site .ab-wave span { width: 3px; border-radius: 1px; background: rgba(236,231,223,0.3); display: block; transition: height 0.3s ease, background 0.3s ease; }
-  .tm-site .ab-wave.state-after span { background: #d98a3d; }
-  .tm-site .ab-audio { width: 100%; height: 36px; color-scheme: dark; }
+  .tm-site .ab-player { display: flex; align-items: center; gap: 16px; }
+  .tm-site .ab-play {
+    flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; padding: 0;
+    background: rgba(217,138,61,0.12); border: 1px solid rgba(217,138,61,0.4); color: #d98a3d;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
+  }
+  .tm-site .ab-play svg { margin-left: 2px; }
+  .tm-site .ab-play:hover { background: rgba(217,138,61,0.22); }
+  .tm-site .ab-play:active { transform: scale(0.92); }
+  .tm-site .ab-wave-track { flex: 1; height: 40px; padding: 4px 0; cursor: pointer; }
+  .tm-site .ab-wave { display: flex; align-items: center; gap: 2px; height: 100%; width: 100%; }
+  .tm-site .ab-wave span {
+    flex: 1 1 0; min-width: 2px; border-radius: 1px; background: rgba(236,231,223,0.2);
+    display: block; transition: background 0.2s ease;
+  }
+  .tm-site .ab-wave span.is-played { background: rgba(236,231,223,0.55); }
+  .tm-site .ab-wave.state-after span.is-played { background: #d98a3d; }
+  .tm-site .ab-time {
+    flex-shrink: 0; font-family: 'Jost', sans-serif; font-variant-numeric: tabular-nums;
+    font-size: 12px; color: rgba(236,231,223,0.45); white-space: nowrap;
+  }
 
   /* как записаться */
   .tm-site .booking-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 56px; max-width: 1120px; margin-bottom: 52px; }
