@@ -1,7 +1,7 @@
 import { prisma } from "./db";
 import { getCalendarBusyRanges } from "./googleCalendar";
 import { getSettings, ruleForWeekday } from "./settings";
-import { addHour, isPastDate, weekdayOf, zonedDateTimeToUtc } from "./time";
+import { addHour, isPastDate, nowTimeStr, todayDateStr, weekdayOf, zonedDateTimeToUtc } from "./time";
 
 export type HourSlot = {
   time: string; // "18:00" — начало часа, Europe/Moscow
@@ -74,9 +74,15 @@ export async function getHourlyAvailability(dateStr: string, excludeBookingId?: 
 
   const occupied = await occupiedRangesForDate(dateStr, excludeBookingId);
 
+  // Для сегодняшнего дня часы, которые уже наступили или прошли, тоже
+  // считаются занятыми — иначе можно было "забронировать" 12:00, когда уже
+  // 15:00, и заявка формально создавалась бы на прошедшее время.
+  const isToday = dateStr === todayDateStr();
+  const now = isToday ? nowTimeStr() : null;
+
   return starts.map((time) => ({
     time,
-    free: !occupied.some((o) => hourOverlapsRange(time, o.startTime, o.endTime)),
+    free: !(now !== null && time <= now) && !occupied.some((o) => hourOverlapsRange(time, o.startTime, o.endTime)),
   }));
 }
 

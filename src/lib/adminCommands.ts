@@ -6,6 +6,20 @@ import { addHour, formatDateHuman, todayDateStr, zonedDateTimeToUtc } from "./ti
 /** Текст + (опционально) кнопки под ним — общий формат ответа админ-команд. */
 export type CommandReply = { text: string; buttons?: InlineButton[][] };
 
+/**
+ * Постоянное меню снизу экрана (Reply Keyboard) — в отличие от инлайн-кнопок
+ * mainMenuButtons() ниже (которые висят только под конкретным сообщением),
+ * это меню остаётся на экране всегда, независимо от того, что происходит в
+ * чате дальше. Нажатие на кнопку отправляет её текст обычным сообщением —
+ * обработка в src/app/api/telegram/webhook/route.ts (handleKeyboardButton).
+ */
+export const ADMIN_KEYBOARD: string[][] = [
+  ["📅 Сегодня", "📆 Завтра"],
+  ["🗓 Дни с записями", "⏳ Ждут подтверждения"],
+  ["📆 Неделя", "📋 Ближайшие"],
+  ["🕐 Свободные часы"],
+];
+
 /** Главное меню — показывается по /start, /menu и кнопкой "🔙 Меню" под любым ответом. */
 export function mainMenuButtons(): InlineButton[][] {
   return [

@@ -30,6 +30,13 @@ export function isPastDate(dateStr: string): boolean {
   return dateStr < todayDateStr();
 }
 
+/** Текущее время "часы:минуты" по Europe/Moscow — сравнивать со стартом
+ * часового слота вроде "14:00" (оба вида — зеро-паддед "HH:mm", поэтому
+ * обычное строковое сравнение работает как числовое). */
+export function nowTimeStr(): string {
+  return formatInTimeZone(new Date(), STUDIO_TIMEZONE, "HH:mm");
+}
+
 /** Человекочитаемая дата на русском: "28 августа". */
 const MONTHS_RU = [
   "января",
