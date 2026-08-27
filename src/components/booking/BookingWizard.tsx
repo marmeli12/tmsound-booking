@@ -80,6 +80,19 @@ export default function BookingWizard() {
 
   const stepIndex = STEP_ORDER.indexOf(step);
 
+  // Закрыть финальный экран "Заявка отправлена" — возвращает форму к началу,
+  // чтобы можно было создать новую бронь, не перезагружая страницу.
+  function resetWizard() {
+    setStep("service");
+    setService(null);
+    setDateStr(null);
+    setStartTime(null);
+    setDuration(null);
+    setContact(EMPTY_CONTACT);
+    setSubmitError(null);
+    setBotDeepLink(null);
+  }
+
   function goBack() {
     const idx = STEP_ORDER.indexOf(step);
     const prev = idx > 0 ? STEP_ORDER[idx - 1] : undefined;
@@ -162,6 +175,7 @@ export default function BookingWizard() {
           startTime={startTime}
           endTime={addHour(startTime, duration)}
           botDeepLink={botDeepLink}
+          onClose={resetWizard}
         />
       )}
     </>

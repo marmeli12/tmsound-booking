@@ -7,14 +7,19 @@ export default function StepDone({
   startTime,
   endTime,
   botDeepLink,
+  onClose,
 }: {
   dateStr: string;
   startTime: string;
   endTime: string;
   botDeepLink: string | null;
+  onClose: () => void;
 }) {
   return (
     <div className="step-panel status-screen">
+      <button className="status-close" onClick={onClose} aria-label="Закрыть">
+        ✕
+      </button>
       <div className="status-icon">⏳</div>
       <div className="status-title">Заявка отправлена</div>
       <div className="status-desc">Мы получили вашу заявку и скоро подтвердим запись.</div>
