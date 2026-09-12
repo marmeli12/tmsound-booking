@@ -197,19 +197,18 @@
   /* услуги */
   .tm-site .uslugi-frame { max-width: 980px; margin: 0 auto; }
   .tm-site .section-head--center { justify-content: center; text-align: center; margin-bottom: 56px; }
-  .tm-site .uslugi-body { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: stretch; }
-  .tm-site .uslugi-photo { display: flex; flex-direction: column; }
+  .tm-site .uslugi-body { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
   .tm-site .uslugi-photo img {
-    /* align-items:stretch на .uslugi-body растягивает .uslugi-photo на
-       всю высоту строки грида (= высота прайс-листа слева); flex:1
-       отдаёт всю эту высоту картинке (за вычетом подписи), а
-       object-fit:cover не даёт пропорциям фото исказиться —
-       кадр остаётся горизонтальным вне зависимости от того, насколько
-       выше становится прайс-лист. */
-    width: 100%; flex: 1 1 auto; min-height: 0; object-fit: cover; display: block;
+    /* Блок с фото и блок с услугами — независимые колонки грида
+       (align-items:start), никак не завязанные друг на друга: наведение
+       на пункт прайс-листа (раскрытие описания) меняет высоту только
+       левой колонки и не трогает фото. Само фото — без object-fit и без
+       фиксированной высоты, показывается в своих исходных пропорциях
+       (просто вписано по ширине колонки), без обрезки и растягивания. */
+    width: 100%; height: auto; display: block;
     filter: contrast(1.05) brightness(0.94);
   }
-  .tm-site .uslugi-photo-cap { margin-top: 14px; font-size: 12px; letter-spacing: 0.06em; color: rgba(236,231,223,0.4); flex: 0 0 auto; }
+  .tm-site .uslugi-photo-cap { margin-top: 14px; font-size: 12px; letter-spacing: 0.06em; color: rgba(236,231,223,0.4); }
   .tm-site .service-group { max-width: 620px; margin-bottom: 52px; }
   .tm-site .group-label { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(236,231,223,0.4); margin-bottom: 14px; }
   .tm-site .price-list {}
@@ -557,8 +556,6 @@
 @media (max-width: 900px) {
   .tm-site .hero-section { min-height: 760px; }
   .tm-site .uslugi-body { grid-template-columns: 1fr; gap: 40px; }
-  .tm-site .uslugi-photo { display: block; }
-  .tm-site .uslugi-photo img { height: 300px; }
   .tm-site .studio-grid { grid-template-columns: 1fr; gap: 40px; }
   .tm-site .raboty-body { grid-template-columns: 1fr; gap: 32px; }
   .tm-site .raboty-carousel { max-width: 340px; }
@@ -595,7 +592,6 @@
   .tm-site .section-head { margin-bottom: 30px; }
   .tm-site .section-head--center { margin-bottom: 40px; }
 
-  .tm-site .uslugi-photo img { height: 220px; }
   .tm-site .studio-photos { grid-template-columns: 1fr; }
   .tm-site .studio-photos .wide { grid-column: 1; height: 200px; }
   .tm-site .studio-spec, .tm-site .studio-copy { max-width: 100%; }
