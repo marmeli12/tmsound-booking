@@ -5,10 +5,20 @@
   --fg: #ece7df;
   --fg-dim: rgba(236, 231, 223, 0.62);
   --fg-dimmer: rgba(236, 231, 223, 0.4);
-  --accent: #d98a3d;
-  --accent-ink: #17130c;
+  /* Фирменный акцент — глубокий винный #531d23. На почти чёрном фоне он
+     работает как ЗАЛИВКА (кнопки, бейджи, выбранные ячейки): текста на нём
+     хватает контраста. Для самого текста акцентом используется светлый тон
+     того же оттенка (#c1636d) — сам #531d23 на фоне #0b0a09 даёт
+     контраст 1.5:1 и был бы нечитаем. Подложки и обводки — rgba(193,99,109). */
+  --accent: #531d23;
+  --accent-hover: #6b2830;
+  --accent-text: #c1636d;
+  --accent-ink: #f6ebe9;
   --line: rgba(236, 231, 223, 0.14);
-  --danger: #c25454;
+  /* Цвет ошибки уведён в оранжево-красный: прежний #c25454 почти совпал
+     с новым акцентом (#c1636d) — сообщение об ошибке читалось бы как
+     обычный акцентный текст. */
+  --danger: #e2614d;
 }
 
 html, body {
@@ -70,8 +80,8 @@ a { color: inherit; }
   transition: background 0.25s ease;
 }
 
-.step-dot.active { background: var(--accent); }
-.step-dot.done { background: rgba(217, 138, 61, 0.45); }
+.step-dot.active { background: var(--accent-text); }
+.step-dot.done { background: rgba(193,99,109, 0.45); }
 
 .step-panel {
   background: rgba(236, 231, 223, 0.03);
@@ -84,7 +94,7 @@ a { color: inherit; }
   font-size: 12px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--accent-text);
   margin-bottom: 18px;
 }
 
@@ -106,13 +116,13 @@ a { color: inherit; }
   transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
 }
 
-.service-card:hover { border-color: rgba(217, 138, 61, 0.45); background: rgba(217, 138, 61, 0.04); }
+.service-card:hover { border-color: rgba(193,99,109, 0.45); background: rgba(193,99,109, 0.04); }
 .service-card:active { transform: scale(0.99); }
-.service-card.selected { border-color: var(--accent); background: rgba(217, 138, 61, 0.08); }
+.service-card.selected { border-color: var(--accent-text); background: rgba(193,99,109, 0.08); }
 
 .service-name { font-size: 15px; font-weight: 600; }
 .service-desc { font-size: 13px; color: var(--fg-dim); margin-top: 4px; line-height: 1.5; }
-.service-price { font-family: "Jost", sans-serif; color: var(--accent); font-size: 15px; white-space: nowrap; }
+.service-price { font-family: "Jost", sans-serif; color: var(--accent-text); font-size: 15px; white-space: nowrap; }
 
 /* --- календарь --- */
 .calendar-nav {
@@ -123,7 +133,7 @@ a { color: inherit; }
   width: 34px; height: 34px; cursor: pointer; font-size: 16px;
   transition: border-color 0.2s ease, color 0.2s ease;
 }
-.calendar-nav button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.calendar-nav button:hover:not(:disabled) { border-color: var(--accent-text); color: var(--accent-text); }
 .calendar-nav button:disabled { opacity: 0.3; cursor: not-allowed; }
 .calendar-month { font-family: "Jost", sans-serif; font-size: 15px; text-transform: capitalize; }
 
@@ -144,7 +154,7 @@ a { color: inherit; }
   font-size: 13px; border: 1px solid transparent; background: rgba(236, 231, 223, 0.03);
   cursor: pointer; color: var(--fg); transition: border-color 0.2s ease, background 0.2s ease;
 }
-.calendar-day:hover:not(:disabled) { border-color: rgba(217, 138, 61, 0.45); }
+.calendar-day:hover:not(:disabled) { border-color: rgba(193,99,109, 0.45); }
 .calendar-day.selected { background: var(--accent); color: var(--accent-ink); font-weight: 700; }
 .calendar-day:disabled {
   color: var(--fg-dimmer); background: transparent; cursor: not-allowed; text-decoration: line-through;
@@ -166,10 +176,10 @@ a { color: inherit; }
   width: 48px; flex-shrink: 0; font-family: "Jost", sans-serif; font-size: 13px; color: var(--fg-dim);
 }
 .time-row-bar {
-  flex: 1; height: 26px; background: rgba(217, 138, 61, 0.08); border: 1px solid transparent;
+  flex: 1; height: 26px; background: rgba(193,99,109, 0.08); border: 1px solid transparent;
   transition: background 0.15s ease, border-color 0.15s ease;
 }
-.time-row:hover:not(.busy) .time-row-bar { border-color: rgba(217, 138, 61, 0.4); }
+.time-row:hover:not(.busy) .time-row-bar { border-color: rgba(193,99,109, 0.4); }
 .time-row.busy { cursor: not-allowed; }
 .time-row.busy .time-row-bar {
   background: repeating-linear-gradient(
@@ -177,14 +187,14 @@ a { color: inherit; }
   );
 }
 .time-row.busy .time-row-label { color: var(--fg-dimmer); text-decoration: line-through; }
-.time-row.selected .time-row-bar { background: var(--accent); border-color: var(--accent); }
+.time-row.selected .time-row-bar { background: var(--accent); border-color: var(--accent-text); }
 .time-row.selected .time-row-label { color: var(--fg); font-weight: 600; }
 
 .time-selection-bar {
   margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line);
   display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
 }
-.time-selection-range { font-family: "Jost", sans-serif; font-size: 17px; color: var(--accent); }
+.time-selection-range { font-family: "Jost", sans-serif; font-size: 17px; color: var(--accent-text); }
 .time-selection-duration { font-size: 13px; color: var(--fg-dim); }
 
 /* --- форма контактов --- */
@@ -198,7 +208,7 @@ a { color: inherit; }
   color: var(--fg); padding: 12px 14px; font-family: inherit; font-size: 15px;
 }
 .form-field input:focus, .form-field textarea:focus {
-  outline: none; border-color: var(--accent);
+  outline: none; border-color: var(--accent-text);
 }
 .form-error { color: var(--danger); font-size: 12px; margin-top: 6px; }
 .form-hint { color: var(--fg-dimmer); font-size: 12px; margin-top: 6px; }
@@ -211,7 +221,7 @@ a { color: inherit; }
   display: flex; justify-content: space-between; align-items: baseline;
   padding-top: 14px; border-top: 1px solid var(--line); font-family: "Jost", sans-serif;
 }
-.summary-total .price { color: var(--accent); font-size: 24px; }
+.summary-total .price { color: var(--accent-text); font-size: 24px; }
 
 /* --- кнопки --- */
 .btn-row { display: flex; gap: 12px; margin-top: 24px; }
@@ -222,7 +232,7 @@ a { color: inherit; }
   transition: transform 0.22s cubic-bezier(.34,1.56,.64,1), box-shadow 0.25s ease, opacity 0.2s ease;
 }
 .btn-primary { background: var(--accent); color: var(--accent-ink); flex: 1; }
-.btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(217,138,61,0.35); }
+.btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(193,99,109,0.35); }
 .btn-primary:active:not(:disabled) { transform: translateY(0) scale(0.96); }
 .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
 .btn-ghost { background: transparent; color: var(--fg-dim); border: 1px solid var(--line); }
@@ -233,21 +243,21 @@ a { color: inherit; }
   cursor: pointer; padding: 0; margin-bottom: 14px; display: inline-flex; align-items: center;
   transition: color 0.2s ease;
 }
-.wizard-back:hover { color: var(--accent); }
+.wizard-back:hover { color: var(--accent-text); }
 
 /* --- финальные экраны --- */
 .status-screen { position: relative; text-align: center; padding: 40px 12px; }
 .status-icon { font-size: 42px; margin-bottom: 18px; }
 .status-title { font-family: "Jost", sans-serif; font-size: 22px; margin-bottom: 10px; }
 .status-desc { color: var(--fg-dim); line-height: 1.6; margin-bottom: 24px; }
-.status-details { font-family: "Jost", sans-serif; color: var(--accent); font-size: 16px; }
+.status-details { font-family: "Jost", sans-serif; color: var(--accent-text); font-size: 16px; }
 .status-close {
   position: absolute; top: 12px; right: 12px;
   width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
   background: none; border: none; color: var(--fg-dimmer); font-size: 20px; line-height: 1;
   cursor: pointer; border-radius: 50%; transition: color 0.2s ease, background 0.2s ease;
 }
-.status-close:hover { color: var(--accent); background: rgba(236, 231, 223, 0.06); }
+.status-close:hover { color: var(--accent-text); background: rgba(236, 231, 223, 0.06); }
 
 .loading-line { color: var(--fg-dimmer); font-size: 13px; padding: 20px 0; text-align: center; }
 

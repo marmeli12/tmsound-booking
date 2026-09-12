@@ -552,7 +552,7 @@ export default function HomePage() {
                 <span
                   key={item.attr + i}
                   className="dot"
-                  style={{ background: i === quoteIndex % QUOTES.length ? "#d98a3d" : "rgba(236,231,223,0.28)" }}
+                  style={{ background: i === quoteIndex % QUOTES.length ? "var(--accent-text)" : "rgba(236,231,223,0.28)" }}
                 />
               ))}
             </div>
@@ -886,9 +886,9 @@ export default function HomePage() {
             key={s.id}
             className="rail-item"
             onClick={() => scrollToSection(s.id)}
-            style={{ color: activeId === s.id ? "#d98a3d" : "rgba(236,231,223,0.55)" }}
+            style={{ color: activeId === s.id ? "var(--accent-text)" : "rgba(236,231,223,0.55)" }}
           >
-            <b style={{ color: activeId === s.id ? "#d98a3d" : "rgba(236,231,223,0.35)" }}>{s.num}</b>
+            <b style={{ color: activeId === s.id ? "var(--accent-text)" : "rgba(236,231,223,0.35)" }}>{s.num}</b>
             {s.label}
           </div>
         ))}
