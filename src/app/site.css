@@ -159,13 +159,25 @@
     display: flex; flex-direction: column; align-items: center; justify-content: space-evenly;
     background: rgba(11,10,9,0.5);
   }
+  /* Раньше пункты рейки были обычными горизонтальными строками, повёрнутыми
+     на -90°. Поворот — это только визуальный эффект: для раскладки такой
+     пункт остаётся «лежащим», высотой в одну строку, поэтому flex считал все
+     пункты одинаковыми и расставлял их через равные промежутки между
+     ЦЕНТРАМИ. Длинные слова («КОНТАКТЫ», «ВОПРОСЫ») по факту занимали по
+     вертикали куда больше и налезали на соседей. writing-mode делает текст
+     вертикальным по-настоящему — высота пункта равна длине слова, и
+     space-evenly раскладывает их с реально равными зазорами.
+     rotate(180deg) оставляет прежнее направление чтения — снизу вверх.
+     Размер шрифта привязан к высоте окна, чтобы на невысоких экранах
+     семь пунктов гарантированно помещались без наложений. */
   .tm-site .rail-item {
-    transform: rotate(-90deg); white-space: nowrap; display: flex; align-items: baseline; gap: 10px;
-    font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer;
+    writing-mode: vertical-rl; transform: rotate(180deg);
+    white-space: nowrap; display: flex; align-items: baseline; gap: 10px;
+    font-size: clamp(9px, 1.45vh, 12px); letter-spacing: 0.16em; text-transform: uppercase; cursor: pointer;
     transition: color 0.25s ease, transform 0.25s ease;
   }
-  .tm-site .rail-item:hover { transform: rotate(-90deg) scale(1.08); }
-  .tm-site .rail-item b { font-weight: 600; font-size: 11px; transition: color 0.25s ease; }
+  .tm-site .rail-item:hover { transform: rotate(180deg) scale(1.08); }
+  .tm-site .rail-item b { font-weight: 600; font-size: 0.92em; transition: color 0.25s ease; }
 
   /* ---------- generic sections ---------- */
   .tm-site .section {
@@ -577,8 +589,8 @@
    что окажется под ней). */
 @media (max-width: 640px) {
   .tm-site .rail { width: 40px; }
-  .tm-site .rail-item { gap: 8px; font-size: 10px; }
-  .tm-site .rail-item b { font-size: 10px; }
+  .tm-site .rail-item { gap: 8px; font-size: clamp(8px, 1.3vh, 10px); }
+  .tm-site .rail-item b { font-size: 1em; }
 
   .tm-site .nav { flex-wrap: wrap; gap: 14px 20px; padding: 20px 64px 18px 20px; }
   .tm-site .nav::after { left: 20px; right: 64px; }
@@ -634,8 +646,8 @@
 /* совсем маленькие телефоны — рейка и отступы сжимаются ещё немного */
 @media (max-width: 400px) {
   .tm-site .rail { width: 34px; }
-  .tm-site .rail-item { font-size: 9px; gap: 6px; }
-  .tm-site .rail-item b { font-size: 9px; }
+  .tm-site .rail-item { font-size: clamp(7px, 1.2vh, 9px); gap: 6px; }
+  .tm-site .rail-item b { font-size: 1em; }
 
   .tm-site .nav { padding-right: 56px; }
   .tm-site .nav::after { right: 56px; }
