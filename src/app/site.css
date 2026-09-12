@@ -197,16 +197,19 @@
   /* услуги */
   .tm-site .uslugi-frame { max-width: 980px; margin: 0 auto; }
   .tm-site .section-head--center { justify-content: center; text-align: center; margin-bottom: 56px; }
-  .tm-site .uslugi-body { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+  .tm-site .uslugi-body { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: stretch; }
+  .tm-site .uslugi-photo { display: flex; flex-direction: column; }
   .tm-site .uslugi-photo img {
-    /* Колонки сделаны равной ширины, чтобы фото было того же размера,
-       что и блок с ценами слева. Высота (300px) подобрана в той же
-       пропорции, что и раньше (было 320×210) — кадр остаётся
-       горизонтальным и видно всех в кадре по ширине, просто крупнее. */
-    width: 100%; height: 300px; object-fit: cover; display: block;
+    /* align-items:stretch на .uslugi-body растягивает .uslugi-photo на
+       всю высоту строки грида (= высота прайс-листа слева); flex:1
+       отдаёт всю эту высоту картинке (за вычетом подписи), а
+       object-fit:cover не даёт пропорциям фото исказиться —
+       кадр остаётся горизонтальным вне зависимости от того, насколько
+       выше становится прайс-лист. */
+    width: 100%; flex: 1 1 auto; min-height: 0; object-fit: cover; display: block;
     filter: contrast(1.05) brightness(0.94);
   }
-  .tm-site .uslugi-photo-cap { margin-top: 14px; font-size: 12px; letter-spacing: 0.06em; color: rgba(236,231,223,0.4); }
+  .tm-site .uslugi-photo-cap { margin-top: 14px; font-size: 12px; letter-spacing: 0.06em; color: rgba(236,231,223,0.4); flex: 0 0 auto; }
   .tm-site .service-group { max-width: 620px; margin-bottom: 52px; }
   .tm-site .group-label { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(236,231,223,0.4); margin-bottom: 14px; }
   .tm-site .price-list {}
@@ -554,6 +557,8 @@
 @media (max-width: 900px) {
   .tm-site .hero-section { min-height: 760px; }
   .tm-site .uslugi-body { grid-template-columns: 1fr; gap: 40px; }
+  .tm-site .uslugi-photo { display: block; }
+  .tm-site .uslugi-photo img { height: 300px; }
   .tm-site .studio-grid { grid-template-columns: 1fr; gap: 40px; }
   .tm-site .raboty-body { grid-template-columns: 1fr; gap: 32px; }
   .tm-site .raboty-carousel { max-width: 340px; }
