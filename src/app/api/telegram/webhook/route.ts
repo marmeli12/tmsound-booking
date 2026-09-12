@@ -133,10 +133,10 @@ async function handleMessage(message: any) {
         await sendMessage(chatId, "Не нашли такую заявку. Проверьте ссылку или напишите нам напрямую.");
       }
     } else if (isAdminChat(chatId)) {
-      await sendMessage(chatId, "Привет! Это бот T&M Sound. Выберите действие:", mainMenuButtons());
+      await sendMessage(chatId, "Привет! Это бот OPEN ROOM. Выберите действие:", mainMenuButtons());
       await sendMessageWithKeyboard(chatId, "⌨️ Снизу — постоянное меню, всегда под рукой.", ADMIN_KEYBOARD);
     } else {
-      await sendMessage(chatId, "Привет! Это бот T&M Sound — сюда придут уведомления по вашей записи.");
+      await sendMessage(chatId, "Привет! Это бот OPEN ROOM — сюда придут уведомления по вашей записи.");
     }
     return;
   }

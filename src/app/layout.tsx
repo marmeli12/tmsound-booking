@@ -3,7 +3,7 @@ import Script from "next/script";
 import "./globals.css";
 
 const SITE_URL = "https://www.tmsound.site";
-const SITE_TITLE = "T&M Sound — студия звукозаписи, Пирогова 17";
+const SITE_TITLE = "OPEN ROOM — студия звукозаписи, Пирогова 17";
 const SITE_DESCRIPTION =
   "Запись, сведение и мастеринг в Санкт-Петербурге. Пишем вокал, сводим и мастерим — работаем допоздна, по записи.";
 
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     "сведение и мастеринг",
     "аренда студии звукозаписи",
     "звукозаписывающая студия",
-    "T&M Sound",
+    "OPEN ROOM",
   ],
   alternates: {
     canonical: "/",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ru_RU",
     url: SITE_URL,
-    siteName: "T&M Sound",
+    siteName: "OPEN ROOM",
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
     images: [{ url: "/room.jpg" }],
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
 const STRUCTURED_DATA = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  name: "T&M Sound",
+  name: "OPEN ROOM",
   image: `${SITE_URL}/room.jpg`,
   url: SITE_URL,
   telephone: "+7-918-944-36-97",

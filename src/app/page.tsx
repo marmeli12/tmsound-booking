@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Главная страница сайта T&M Sound.
+ * Главная страница сайта OPEN ROOM.
  *
  * Портировано из макета в Claude Design canvas (/tmp/tm-sound-canvas/Main.dc.html)
  * в обычный React/Next.js — сам canvas не может грузить внешний контент
@@ -505,8 +505,7 @@ export default function HomePage() {
 
           <div className="nav stagger" style={{ ["--i" as string]: 0 }}>
             <div className="logo-mark">
-              <img src={assetPath("/logo.jpg")} alt="T&amp;M" />
-              <span className="logo-word">T&amp;M SOUND</span>
+              <span className="logo-word">OPEN ROOM</span>
             </div>
             <div className="navlinks">
               <a href="#s-uslugi">Услуги</a>
@@ -526,7 +525,7 @@ export default function HomePage() {
               Санкт-Петербург · Пирогова, 17
             </div>
             <h1 className="wordmark stagger" style={{ ["--i" as string]: 2 }}>
-              T&amp;M SOUND
+              OPEN ROOM
             </h1>
             <p className="desc stagger" style={{ ["--i" as string]: 3 }}>
               Пишем вокал, сводим и мастерим — с балконом, на который можно выйти подышать между дублями. Работаем
@@ -589,7 +588,7 @@ export default function HomePage() {
               </div>
 
               <div className="uslugi-photo stagger img-reveal" style={{ ["--i" as string]: 2 }}>
-                <img src={assetPath("/ambient.jpg")} alt="Сессия в студии T&amp;M Sound" />
+                <img src={assetPath("/ambient.jpg")} alt="Сессия в студии OPEN ROOM" />
                 <div className="uslugi-photo-cap">Одна из сессий в студии — до 5–7 человек одновременно</div>
               </div>
             </div>
@@ -681,7 +680,7 @@ export default function HomePage() {
             <div className="booking-embed stagger" style={{ ["--i" as string]: 2 }}>
               <div className="wizard">
                 <div className="wizard-header">
-                  <div className="wizard-logo">T&amp;M Sound</div>
+                  <div className="wizard-logo">OPEN ROOM</div>
                   <div className="wizard-title">Забронировать студию</div>
                 </div>
                 <BookingWizard />
@@ -866,7 +865,7 @@ export default function HomePage() {
             </a>
           </div>
           <div className="footer-mini stagger" style={{ ["--i" as string]: 3 }}>
-            T&amp;M SOUND · Санкт-Петербург · 2026
+            OPEN ROOM · Санкт-Петербург · 2026
           </div>
         </section>
       </div>

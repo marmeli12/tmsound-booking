@@ -33,7 +33,7 @@ export default function StepSummary({
       <div className="summary-card">
         <div className="summary-row">
           <span className="k">Студия</span>
-          <span>T&amp;M Sound</span>
+          <span>OPEN ROOM</span>
         </div>
         <div className="summary-row">
           <span className="k">Услуга</span>

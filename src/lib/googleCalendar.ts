@@ -104,7 +104,7 @@ export async function createCalendarEvent(booking: BookingWithService): Promise<
     booking.phone ? `Телефон: ${booking.phone}` : null,
     booking.comment ? `Комментарий: ${booking.comment}` : null,
     "",
-    "Создано автоматически с сайта бронирования T&M Sound.",
+    "Создано автоматически с сайта бронирования OPEN ROOM.",
   ].filter((l): l is string => l !== null);
 
   try {

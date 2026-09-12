@@ -38,7 +38,7 @@ export function clientPendingMessage(b: Booking): string {
 export function clientConfirmedMessage(b: Booking, studioAddress: string): string {
   return [
     "✅ <b>ЗАПИСЬ ПОДТВЕРЖДЕНА</b>",
-    "T&M Sound",
+    "OPEN ROOM",
     `📅 ${formatDateHuman(toDateStr(b.date))}`,
     `🕐 ${rangeLine(b)}`,
     `📍 ${studioAddress}`,
@@ -57,7 +57,7 @@ export function clientRejectedMessage(): string {
 export function clientRescheduledMessage(b: Booking, oldDateStr: string, oldRange: string): string {
   return [
     "🔄 <b>ЗАПИСЬ ПЕРЕНЕСЕНА</b>",
-    "T&M Sound",
+    "OPEN ROOM",
     `Было: ${formatDateHuman(oldDateStr)}, ${oldRange}`,
     `Стало: ${formatDateHuman(toDateStr(b.date))}, ${rangeLine(b)}`,
     "",
@@ -93,7 +93,7 @@ export function adminReminderMessage(b: BookingWithService): string {
 
 export function clientReminderMessage(b: Booking): string {
   return [
-    "⏰ Напоминаем о записи в T&M Sound",
+    "⏰ Напоминаем о записи в OPEN ROOM",
     `📅 ${formatDateHuman(toDateStr(b.date))}`,
     `🕐 ${rangeLine(b)}`,
     "До встречи!",
