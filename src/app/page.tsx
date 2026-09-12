@@ -151,7 +151,7 @@ const ABON_PLANS = [
   {
     id: "aPro",
     name: "Pro",
-    price: "19 490 ₽",
+    price: "29 900 ₽",
     meta: "24 часа со звукорежиссёром · приоритет · действует 3 месяца",
     desc: "Самый популярный абонемент — 24 часа со звукорежиссёром, приоритет при бронировании на удобное время и запас в 3 месяца, чтобы не спешить.",
     features: ["24 часа со звукорежиссёром", "Приоритет при бронировании", "Действует 3 месяца"],
@@ -648,7 +648,11 @@ export default function HomePage() {
                 <div className="spec-title">Оборудование</div>
                 <div className="spec-row">
                   <span className="spec-label">Микрофоны</span>
-                  <span className="spec-value">Союз 023 Bomblet, Sony C-80, AKG P120</span>
+                  <span className="spec-value">Neumann TLM 103, Союз 023 Bomblet, Sony C-80, AKG P120</span>
+                </div>
+                <div className="spec-row">
+                  <span className="spec-label">Гитары</span>
+                  <span className="spec-value">Gibson Les Paul, Yamaha F310</span>
                 </div>
                 <div className="spec-row">
                   <span className="spec-label">Мониторы</span>
@@ -855,7 +859,7 @@ export default function HomePage() {
               </div>
 
               <div className="social-row">
-                <a href="https://t.me/tmsounddd" target="_blank" rel="noopener noreferrer">
+                <a href="https://t.me/openroom_studio" target="_blank" rel="noopener noreferrer">
                   Telegram-канал
                 </a>
                 <a href="https://vk.ru/openroomsound" target="_blank" rel="noopener noreferrer">
