@@ -163,7 +163,7 @@ const FAQ_ITEMS = [
   {
     id: "f1",
     q: "Как забронировать студию?",
-    a: "Выберите дату и время прямо в блоке «Как записаться» выше — бронь подтвердится сразу. Если удобнее в переписке, напишите нам в Telegram: @tms0und.",
+    a: "Выберите дату и время прямо в блоке «Как записаться» выше — бронь подтвердится сразу. Если удобнее в переписке, напишите нам в Telegram: @openroomgm.",
   },
   {
     id: "f2",
@@ -687,7 +687,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            <a className="cta-ghost stagger" style={{ ["--i" as string]: 3 }} href="https://t.me/tms0und" target="_blank" rel="noopener noreferrer">
+            <a className="cta-ghost stagger" style={{ ["--i" as string]: 3 }} href="https://t.me/openroomgm" target="_blank" rel="noopener noreferrer">
               Написать в Telegram →
             </a>
           </div>
@@ -842,7 +842,7 @@ export default function HomePage() {
                     <path d="M22 2 11 13" />
                     <path d="M22 2 15 22l-4-9-9-4 20-7z" />
                   </svg>
-                  <a className="contact-value" href="https://t.me/tms0und" target="_blank" rel="noopener noreferrer">
+                  <a className="contact-value" href="https://t.me/openroomgm" target="_blank" rel="noopener noreferrer">
                     Написать в Telegram
                   </a>
                 </div>
@@ -852,10 +852,10 @@ export default function HomePage() {
                 <a href="https://t.me/tmsounddd" target="_blank" rel="noopener noreferrer">
                   Telegram-канал
                 </a>
-                <a href="https://vk.ru/tmsoundd" target="_blank" rel="noopener noreferrer">
+                <a href="https://vk.ru/openroomsound" target="_blank" rel="noopener noreferrer">
                   VK
                 </a>
-                <a href="https://www.instagram.com/tm__sound/" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.instagram.com/openroom_studio/" target="_blank" rel="noopener noreferrer">
                   Instagram
                 </a>
               </div>
@@ -918,7 +918,7 @@ export default function HomePage() {
               </ol>
               <p className="modal-note">
                 Если у вас есть вопросы по правилам — напишите нам в{" "}
-                <a href="https://t.me/tms0und" target="_blank" rel="noopener noreferrer">
+                <a href="https://t.me/openroomgm" target="_blank" rel="noopener noreferrer">
                   Telegram
                 </a>
                 .
@@ -947,7 +947,7 @@ export default function HomePage() {
             <div className="abon-modal-cta">
               <a
                 className="cta-solid cta-primary"
-                href="https://t.me/tms0und"
+                href="https://t.me/openroomgm"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -955,13 +955,13 @@ export default function HomePage() {
               </a>
               <div className="abon-modal-links">
                 <a href="tel:+79189443697">+7 918 944-36-97</a>
-                <a href="https://t.me/tms0und" target="_blank" rel="noopener noreferrer">
+                <a href="https://t.me/openroomgm" target="_blank" rel="noopener noreferrer">
                   Telegram
                 </a>
-                <a href="https://vk.ru/tmsoundd" target="_blank" rel="noopener noreferrer">
+                <a href="https://vk.ru/openroomsound" target="_blank" rel="noopener noreferrer">
                   VK
                 </a>
-                <a href="https://www.instagram.com/tm__sound/" target="_blank" rel="noopener noreferrer">
+                <a href="https://www.instagram.com/openroom_studio/" target="_blank" rel="noopener noreferrer">
                   Instagram
                 </a>
               </div>

@@ -65,7 +65,7 @@ const STRUCTURED_DATA = {
     addressLocality: "Санкт-Петербург",
     addressCountry: "RU",
   },
-  sameAs: ["https://t.me/tms0und", "https://t.me/tmsounddd", "https://www.instagram.com/tm__sound/"],
+  sameAs: ["https://t.me/openroomgm", "https://t.me/tmsounddd", "https://www.instagram.com/openroom_studio/"],
 };
 
 const YANDEX_METRIKA_ID = 112003655;
