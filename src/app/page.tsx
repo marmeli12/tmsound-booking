@@ -576,15 +576,6 @@ export default function HomePage() {
                   <div className="group-label">Продакшн</div>
                   <div className="price-list">{renderServiceGroup(SERVICES_PRODUCTION)}</div>
                 </div>
-
-                <button
-                  type="button"
-                  className="section-link stagger"
-                  style={{ ["--i" as string]: 3 }}
-                  onClick={() => setRulesOpen(true)}
-                >
-                  Полные правила аренды →
-                </button>
               </div>
 
               <div className="uslugi-photo stagger img-reveal" style={{ ["--i" as string]: 2 }}>
@@ -592,6 +583,21 @@ export default function HomePage() {
                 <div className="uslugi-photo-cap">Одна из сессий в студии — до 5–7 человек одновременно</div>
               </div>
             </div>
+
+            {/* Вынесена из .uslugi-copy: раньше эта кнопка была внутри левой
+                колонки грида, и из-за align-items:stretch высота строки
+                (а значит и высота фото справа) считалась вплоть до неё —
+                фото растягивалось намного ниже прайс-листа. Теперь строка
+                грида равна высоте только самого прайс-листа, а кнопка идёт
+                отдельным блоком под всей секцией. */}
+            <button
+              type="button"
+              className="section-link stagger uslugi-rules-link"
+              style={{ ["--i" as string]: 3 }}
+              onClick={() => setRulesOpen(true)}
+            >
+              Полные правила аренды →
+            </button>
 
             <div className="abon-frame stagger" style={{ ["--i" as string]: 4 }}>
               <div className="group-label group-label--center">Абонементы</div>
