@@ -648,7 +648,7 @@ export default function HomePage() {
                 <div className="spec-title">Оборудование</div>
                 <div className="spec-row">
                   <span className="spec-label">Микрофоны</span>
-                  <span className="spec-value">Neumann TLM 103, Союз 023 Bomblet, Sony C-80, AKG P120</span>
+                  <span className="spec-value">Neumann TLM 103, Sony C-80, AKG P120</span>
                 </div>
                 <div className="spec-row">
                   <span className="spec-label">Гитары</span>
