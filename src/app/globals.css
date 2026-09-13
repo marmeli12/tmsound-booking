@@ -8,15 +8,15 @@
   /* Фирменный акцент — глубокий винный #531d23. На почти чёрном фоне он
      работает как ЗАЛИВКА (кнопки, бейджи, выбранные ячейки): текста на нём
      хватает контраста. Для самого текста акцентом используется светлый тон
-     того же оттенка (#c1636d) — сам #531d23 на фоне #0b0a09 даёт
-     контраст 1.5:1 и был бы нечитаем. Подложки и обводки — rgba(193,99,109). */
+     того же оттенка (#c05460) — сам #531d23 на фоне #0b0a09 даёт
+     контраст 1.5:1 и был бы нечитаем. Подложки и обводки — rgba(192,84,96). */
   --accent: #531d23;
   --accent-hover: #6b2830;
-  --accent-text: #c1636d;
+  --accent-text: #c05460;
   --accent-ink: #f6ebe9;
   --line: rgba(236, 231, 223, 0.14);
   /* Цвет ошибки уведён в оранжево-красный: прежний #c25454 почти совпал
-     с новым акцентом (#c1636d) — сообщение об ошибке читалось бы как
+     с новым акцентом (#c05460) — сообщение об ошибке читалось бы как
      обычный акцентный текст. */
   --danger: #e2614d;
 }
@@ -81,7 +81,7 @@ a { color: inherit; }
 }
 
 .step-dot.active { background: var(--accent-text); }
-.step-dot.done { background: rgba(193,99,109, 0.45); }
+.step-dot.done { background: rgba(192,84,96, 0.45); }
 
 .step-panel {
   background: rgba(236, 231, 223, 0.03);
@@ -116,9 +116,9 @@ a { color: inherit; }
   transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
 }
 
-.service-card:hover { border-color: rgba(193,99,109, 0.45); background: rgba(193,99,109, 0.04); }
+.service-card:hover { border-color: rgba(192,84,96, 0.45); background: rgba(192,84,96, 0.04); }
 .service-card:active { transform: scale(0.99); }
-.service-card.selected { border-color: var(--accent-text); background: rgba(193,99,109, 0.08); }
+.service-card.selected { border-color: var(--accent-text); background: rgba(192,84,96, 0.08); }
 
 .service-name { font-size: 15px; font-weight: 600; }
 .service-desc { font-size: 13px; color: var(--fg-dim); margin-top: 4px; line-height: 1.5; }
@@ -154,7 +154,7 @@ a { color: inherit; }
   font-size: 13px; border: 1px solid transparent; background: rgba(236, 231, 223, 0.03);
   cursor: pointer; color: var(--fg); transition: border-color 0.2s ease, background 0.2s ease;
 }
-.calendar-day:hover:not(:disabled) { border-color: rgba(193,99,109, 0.45); }
+.calendar-day:hover:not(:disabled) { border-color: rgba(192,84,96, 0.45); }
 .calendar-day.selected { background: var(--accent); color: var(--accent-ink); font-weight: 700; }
 .calendar-day:disabled {
   color: var(--fg-dimmer); background: transparent; cursor: not-allowed; text-decoration: line-through;
@@ -176,10 +176,10 @@ a { color: inherit; }
   width: 48px; flex-shrink: 0; font-family: "Jost", sans-serif; font-size: 13px; color: var(--fg-dim);
 }
 .time-row-bar {
-  flex: 1; height: 26px; background: rgba(193,99,109, 0.08); border: 1px solid transparent;
+  flex: 1; height: 26px; background: rgba(192,84,96, 0.08); border: 1px solid transparent;
   transition: background 0.15s ease, border-color 0.15s ease;
 }
-.time-row:hover:not(.busy) .time-row-bar { border-color: rgba(193,99,109, 0.4); }
+.time-row:hover:not(.busy) .time-row-bar { border-color: rgba(192,84,96, 0.4); }
 .time-row.busy { cursor: not-allowed; }
 .time-row.busy .time-row-bar {
   background: repeating-linear-gradient(
@@ -232,7 +232,7 @@ a { color: inherit; }
   transition: transform 0.22s cubic-bezier(.34,1.56,.64,1), box-shadow 0.25s ease, opacity 0.2s ease;
 }
 .btn-primary { background: var(--accent); color: var(--accent-ink); flex: 1; }
-.btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(193,99,109,0.35); }
+.btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(192,84,96,0.35); }
 .btn-primary:active:not(:disabled) { transform: translateY(0) scale(0.96); }
 .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
 .btn-ghost { background: transparent; color: var(--fg-dim); border: 1px solid var(--line); }

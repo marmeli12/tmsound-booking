@@ -93,8 +93,8 @@
     font-size: 13px; font-weight: 700; letter-spacing: 0.02em; cursor: pointer;
     transition: transform 0.22s cubic-bezier(.34,1.56,.64,1), box-shadow 0.25s ease;
   }
-  .tm-site .book-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(193,99,109,0.35); }
-  .tm-site .book-btn:active { transform: translateY(0) scale(0.95); box-shadow: 0 2px 8px rgba(193,99,109,0.25); transition-duration: 0.08s; }
+  .tm-site .book-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(192,84,96,0.35); }
+  .tm-site .book-btn:active { transform: translateY(0) scale(0.95); box-shadow: 0 2px 8px rgba(192,84,96,0.25); transition-duration: 0.08s; }
   .tm-site .hero {
     position: relative; z-index: 3; padding: 210px 96px 0 64px; max-width: 780px;
   }
@@ -116,8 +116,8 @@
     font-size: 14px; font-weight: 700; letter-spacing: 0.02em; cursor: pointer;
     transition: transform 0.22s cubic-bezier(.34,1.56,.64,1), box-shadow 0.25s ease;
   }
-  .tm-site .cta-solid:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(193,99,109,0.35); }
-  .tm-site .cta-solid:active { transform: translateY(0) scale(0.96); box-shadow: 0 2px 8px rgba(193,99,109,0.25); transition-duration: 0.08s; }
+  .tm-site .cta-solid:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(192,84,96,0.35); }
+  .tm-site .cta-solid:active { transform: translateY(0) scale(0.96); box-shadow: 0 2px 8px rgba(192,84,96,0.25); transition-duration: 0.08s; }
   .tm-site .cta-primary { position: relative; overflow: hidden; }
   .tm-site .cta-primary::before {
     content: ""; position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
@@ -125,8 +125,8 @@
     transform: skewX(-20deg); transition: left 0.65s ease;
   }
   .tm-site .cta-primary:hover::before { left: 130%; }
-  .tm-site .cta-primary:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 12px 30px rgba(193,99,109,0.45); }
-  .tm-site .cta-primary:active { transform: translateY(-1px) scale(0.94); box-shadow: 0 4px 12px rgba(193,99,109,0.3); }
+  .tm-site .cta-primary:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 12px 30px rgba(192,84,96,0.45); }
+  .tm-site .cta-primary:active { transform: translateY(-1px) scale(0.94); box-shadow: 0 4px 12px rgba(192,84,96,0.3); }
   .tm-site .cta-ghost {
     font-size: 14px; font-weight: 600; border-bottom: 1.5px solid #ece7df; padding-bottom: 2px; color: #ece7df;
     display: inline-block; transition: color 0.22s ease, border-color 0.22s ease, transform 0.22s ease;
@@ -238,7 +238,7 @@
     padding: 16px 0; cursor: pointer;
   }
   .tm-site .price-row:hover .price-name { color: var(--accent-text); }
-  .tm-site .price-idx { width: 24px; flex-shrink: 0; font-family: 'Jost', sans-serif; font-size: 12px; color: rgba(193,99,109,0.75); }
+  .tm-site .price-idx { width: 24px; flex-shrink: 0; font-family: 'Jost', sans-serif; font-size: 12px; color: rgba(192,84,96,0.88); }
   .tm-site .price-name { flex: 1; font-size: 16px; color: rgba(236,231,223,0.85); transition: color 0.2s ease; }
   .tm-site .price-val { font-family: 'Jost', sans-serif; font-size: 16px; color: var(--accent-text); white-space: nowrap; }
   .tm-site .price-chevron {
@@ -261,10 +261,10 @@
     transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease;
   }
   .tm-site .compare-col:hover, .tm-site .compare-col:focus-visible {
-    border-color: rgba(193,99,109,0.32); background: rgba(193,99,109,0.035); transform: translateY(-3px);
+    border-color: rgba(192,84,96,0.32); background: rgba(192,84,96,0.035); transform: translateY(-3px);
   }
   .tm-site .compare-col:focus-visible { outline: none; }
-  .tm-site .compare-col--featured { border-color: rgba(193,99,109,0.45); background: rgba(193,99,109,0.06); position: relative; }
+  .tm-site .compare-col--featured { border-color: rgba(192,84,96,0.45); background: rgba(192,84,96,0.06); position: relative; }
   .tm-site .compare-col--featured:hover { border-color: var(--accent-text); }
   .tm-site .compare-badge {
     align-self: flex-start; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
@@ -295,7 +295,7 @@
   .tm-site .studio-copy { font-size: 16px; line-height: 1.7; color: rgba(236,231,223,0.72); max-width: 460px; }
   .tm-site .studio-copy p { margin: 0 0 24px 0; }
   .tm-site .studio-spec {
-    border: 1px solid rgba(193,99,109,0.22); background: rgba(193,99,109,0.045);
+    border: 1px solid rgba(192,84,96,0.22); background: rgba(192,84,96,0.045);
     padding: 22px 24px; max-width: 460px;
   }
   .tm-site .spec-title {
@@ -351,7 +351,7 @@
     width: 6px; height: 6px; border-radius: 50%; background: rgba(236,231,223,0.28);
     border: none; padding: 0; cursor: pointer; transition: background 0.25s ease, transform 0.25s ease;
   }
-  .tm-site .raboty-carousel-dot:hover { background: rgba(193,99,109,0.6); }
+  .tm-site .raboty-carousel-dot:hover { background: rgba(192,84,96,0.6); }
   .tm-site .raboty-carousel-dot.active { background: var(--accent-text); transform: scale(1.35); }
 
   /* до/после сведения */
@@ -366,10 +366,10 @@
     padding: 24px 28px; border: 1px solid rgba(236,231,223,0.16);
     transition: border-color 0.25s ease, background 0.25s ease;
   }
-  .tm-site .ab-example:hover { border-color: rgba(193,99,109,0.4); background: rgba(193,99,109,0.03); }
+  .tm-site .ab-example:hover { border-color: rgba(192,84,96,0.4); background: rgba(192,84,96,0.03); }
   .tm-site .ab-example-head { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 18px; }
   .tm-site .ab-example-title { display: flex; align-items: baseline; gap: 14px; }
-  .tm-site .ab-example-idx { font-family: 'Jost', sans-serif; font-size: 13px; color: rgba(193,99,109,0.75); }
+  .tm-site .ab-example-idx { font-family: 'Jost', sans-serif; font-size: 13px; color: rgba(192,84,96,0.88); }
   .tm-site .ab-example-name { font-family: 'Jost', sans-serif; font-size: 16px; letter-spacing: 0.02em; color: rgba(236,231,223,0.9); }
   .tm-site .ab-toggle { display: flex; border: 1px solid rgba(236,231,223,0.25); border-radius: 2px; overflow: hidden; flex-shrink: 0; }
   .tm-site .ab-toggle button {
@@ -383,12 +383,12 @@
   .tm-site .ab-player { display: flex; align-items: center; gap: 16px; }
   .tm-site .ab-play {
     flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; padding: 0;
-    background: rgba(193,99,109,0.12); border: 1px solid rgba(193,99,109,0.4); color: var(--accent-text);
+    background: rgba(192,84,96,0.12); border: 1px solid rgba(192,84,96,0.4); color: var(--accent-text);
     display: flex; align-items: center; justify-content: center; cursor: pointer;
     transition: background 0.2s ease, transform 0.15s ease;
   }
   .tm-site .ab-play svg { margin-left: 2px; }
-  .tm-site .ab-play:hover { background: rgba(193,99,109,0.22); }
+  .tm-site .ab-play:hover { background: rgba(192,84,96,0.22); }
   .tm-site .ab-play:active { transform: scale(0.92); }
   .tm-site .ab-wave-track { flex: 1; height: 40px; padding: 4px 0; cursor: pointer; }
   .tm-site .ab-wave { display: flex; align-items: center; gap: 2px; height: 100%; width: 100%; }
@@ -463,7 +463,7 @@
   }
   .tm-site .modal-card {
     position: relative; width: 100%; max-width: 560px; max-height: 84vh; overflow-y: auto;
-    background: #14120f; border: 1px solid rgba(193,99,109, 0.25); border-radius: 4px;
+    background: #14120f; border: 1px solid rgba(192,84,96, 0.25); border-radius: 4px;
     padding: 40px 36px;
     animation: tm-modal-in 0.25s cubic-bezier(.16,.8,.24,1);
   }
@@ -485,7 +485,7 @@
   .tm-site .modal-body ol { margin: 0 0 20px 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; }
   .tm-site .modal-body ol li::marker { color: var(--accent-text); font-family: 'Jost', sans-serif; }
   .tm-site .modal-note { font-size: 13px; color: rgba(236,231,223,0.5); margin-bottom: 0; }
-  .tm-site .modal-note a { color: var(--accent-text); border-bottom: 1px solid rgba(193,99,109,0.4); }
+  .tm-site .modal-note a { color: var(--accent-text); border-bottom: 1px solid rgba(192,84,96,0.4); }
 
   /* карточка абонемента внутри модалки */
   .tm-site .abon-modal-badge { margin-bottom: 18px; }
@@ -546,8 +546,8 @@
   max-width: 640px;
   margin: 0 auto 44px auto;
   padding: 32px;
-  border: 1px solid rgba(193,99,109, 0.22);
-  background: rgba(193,99,109, 0.045);
+  border: 1px solid rgba(192,84,96, 0.22);
+  background: rgba(192,84,96, 0.045);
   border-radius: 4px;
   text-align: left;
 }
