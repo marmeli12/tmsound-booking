@@ -69,16 +69,31 @@ export default function StepTime({
     return i;
   }
 
+  // На телефоне шкала больше не перехватывает вертикальный жест (в CSS
+  // touch-action:pan-y), поэтому протянуть по ней пальцем нельзя — этот
+  // жест теперь скроллит страницу. Чтобы период всё равно можно было
+  // выбрать, касанием ничего не выделяем при нажатии: ждём отпускания и
+  // считаем это тапом. Первый тап — начало периода, второй — конец.
+  // Если браузер забрал жест под скролл, приходит pointercancel и мы
+  // просто ничего не делаем — прокрутка по шкале больше не выделяет часы.
+  // Мышь работает как раньше: нажал и потянул.
+  const tapRef = useRef<{ idx: number; y: number; moved: boolean } | null>(null);
+
   function handlePointerDown(e: React.PointerEvent<HTMLDivElement>) {
     const idx = indexFromClientY(e.clientY);
     if (idx === null || !slots[idx]?.free) return;
-    e.currentTarget.setPointerCapture(e.pointerId);
-    setAnchorIndex(idx);
-    setRangeEndIndex(idx);
-    setDragging(true);
+    tapRef.current = { idx, y: e.clientY, moved: false };
+    if (e.pointerType === "mouse") {
+      e.currentTarget.setPointerCapture(e.pointerId);
+      setAnchorIndex(idx);
+      setRangeEndIndex(idx);
+      setDragging(true);
+    }
   }
 
   function handlePointerMove(e: React.PointerEvent<HTMLDivElement>) {
+    const tap = tapRef.current;
+    if (tap && Math.abs(e.clientY - tap.y) > 6) tap.moved = true;
     if (!dragging || anchorIndex === null) return;
     const idx = indexFromClientY(e.clientY);
     if (idx === null) return;
@@ -86,6 +101,20 @@ export default function StepTime({
   }
 
   function handlePointerUp() {
+    const tap = tapRef.current;
+    tapRef.current = null;
+    setDragging(false);
+    if (!tap || tap.moved) return; // это было перетаскивание мышью — диапазон уже собран
+    if (anchorIndex !== null && anchorIndex === rangeEndIndex && tap.idx !== anchorIndex) {
+      setRangeEndIndex(clampToward(anchorIndex, tap.idx)); // второй тап — конец периода
+    } else {
+      setAnchorIndex(tap.idx); // первый тап — один час
+      setRangeEndIndex(tap.idx);
+    }
+  }
+
+  function handlePointerCancel() {
+    tapRef.current = null;
     setDragging(false);
   }
 
@@ -114,7 +143,7 @@ export default function StepTime({
       ) : (
         <>
           <div className="time-hint">
-            Потяните по шкале, чтобы выбрать период, или нажмите один час
+            Нажмите начало и конец периода или потяните по шкале
           </div>
           <div
             className="time-track"
@@ -122,7 +151,7 @@ export default function StepTime({
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
-            onPointerCancel={handlePointerUp}
+            onPointerCancel={handlePointerCancel}
           >
             {slots.map((s, i) => {
               const inSelection = !!selection && i >= selection.from && i <= selection.to;
