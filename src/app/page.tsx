@@ -446,8 +446,24 @@ export default function HomePage() {
   useEffect(() => {
     const anyOpen = rulesOpen || !!openAbonId;
     if (!anyOpen) return;
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    // На iOS одного overflow:hidden на body мало — страница под модалкой
+    // продолжает тянуться пальцем. Поэтому фиксируем body на месте и
+    // запоминаем позицию, а при закрытии возвращаем её обратно: иначе
+    // закрытие модалки выбрасывало бы пользователя в начало страницы.
+    const body = document.body;
+    const scrollY = window.scrollY;
+    const prev = {
+      position: body.style.position,
+      top: body.style.top,
+      left: body.style.left,
+      right: body.style.right,
+      overflow: body.style.overflow,
+    };
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.overflow = "hidden";
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setRulesOpen(false);
@@ -456,7 +472,12 @@ export default function HomePage() {
     };
     window.addEventListener("keydown", onKey);
     return () => {
-      document.body.style.overflow = prevOverflow;
+      body.style.position = prev.position;
+      body.style.top = prev.top;
+      body.style.left = prev.left;
+      body.style.right = prev.right;
+      body.style.overflow = prev.overflow;
+      window.scrollTo(0, scrollY);
       window.removeEventListener("keydown", onKey);
     };
   }, [rulesOpen, openAbonId]);
@@ -496,7 +517,7 @@ export default function HomePage() {
       <div className="root">
         <section id="s-hero" className="hero-section reveal">
           <div className="bg">
-            <img src={assetPath("/desk.jpg")} alt="Рабочее место студии" />
+            <img src={assetPath("/hero.jpg")} alt="Студия OPEN ROOM — рабочее место" />
           </div>
           <div className="bg-tint" />
           <div className="bg-fade" />
