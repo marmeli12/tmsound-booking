@@ -636,7 +636,15 @@
   .tm-site .desc { font-size: 14px; max-width: 100%; }
   .tm-site .cta-row { flex-wrap: wrap; gap: 16px; }
 
-  .tm-site .quote { position: static; width: auto; margin: 40px 0 0 0; min-height: 0; }
+  /* Цитата — не внутри .hero, а соседний блок секции, поэтому отступы
+     задаём ей самой. Одинаковые слева и справа (справа их всё равно
+     требует рейка) — блок стоит ровно по центру экрана. */
+  /* position:relative + z-index — иначе у static-блока z-index не работает
+     и абсолютные слои фона (затемнение .bg-fade) ложились ПОВЕРХ цитаты:
+     текст выходил притушенным, а ссылка «отзыв на Авито» и точки-
+     переключатели не нажимались — тап попадал в слой фона. */
+  .tm-site .quote { position: relative; z-index: 3; top: auto; right: auto; width: auto; margin: 40px 36px 0 36px; min-height: 0; text-align: center; }
+  .tm-site .quote-dots { justify-content: center; }
 
   .tm-site .section { padding: 64px 36px 64px 20px; }
   .tm-site .section::before { left: 20px; right: 36px; }
@@ -697,7 +705,7 @@
   .tm-site .nav { padding-right: 32px; }
   .tm-site .nav::after { right: 32px; }
   .tm-site .hero { padding-right: 32px; }
-  .tm-site .quote { margin-right: 32px; }
+  .tm-site .quote { margin-left: 32px; margin-right: 32px; }
   .tm-site .section { padding-right: 32px; }
   .tm-site .section::before { right: 32px; }
 
